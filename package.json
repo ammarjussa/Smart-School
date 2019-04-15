@@ -5,7 +5,7 @@
     "node": "8.10.0"
   },
   "description": "Simple Login System",
-  "main": "app.js",
+  "main": "index.js",
   "scripts": {
     "client-install": "npm install --prefix client",
     "start": "node index.js",
