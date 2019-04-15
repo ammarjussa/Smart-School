@@ -11,19 +11,19 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json
 app.use(bodyParser.json())
 // provide static files
-app.use(express.static(path.join(__dirname,'Proj/build')))
+app.use(express.static(path.join(__dirname,'client/build')))
 
 //production mode
 if(process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(__dirname, 'Proj/build')));
+    app.use(express.static(path.join(__dirname, 'client/build')));
     //
     app.get('*', (req, res) => {
-      res.sendfile(path.join(__dirname = 'Proj/build/index.html'));
+      res.sendfile(path.join(__dirname = 'client/build/index.html'));
     })
   }
   //build mode
   app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname+'/Proj/public/index.html'));
+    res.sendFile(path.join(__dirname+'/client/public/index.html'));
   })
 
 require('./routes/route')(app);
