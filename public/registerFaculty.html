@@ -1,0 +1,53 @@
+<!DOCTYPE>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Register Page</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <form method="POST" onsubmit="return validateForm()" action="/registerFaculty">
+        <fieldset>
+            <h1>Register a new faculty member</h1> 
+            <div>
+                <p class="p-register">Full Name</p> 
+                <input id="name" name="name" class="input-register" placeholder="Enter full name"  autofocus="true" type="text">
+            </div>
+            <div>
+                <p class="p-register">Password</p>
+                <input id="password" name="password" class="input-register" placeholder="Enter password"  autofocus="true" type="password">
+            </div>
+            <div>
+                <p class="p-register">Confirm Password</p>
+                <input id="confirm" class="input-register" placeholder="Type your password again"  autofocus="true" type="password">
+            </div>
+            <div>
+                <p class="p-register">Class</p> 
+                <input id="class" name="class" class="input-register" placeholder="Enter class"  autofocus="true" type="text">
+            </div>
+            <div>
+                <p class="p-register">Section</p> 
+                <select name='section' id="section" class="input-register">
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                  </select>
+            </div>
+            <div>
+                <p class="p-register">E-mail</p>
+                <input id="email" name="email" class="input-register" placeholder="Enter email id"  autofocus="true" type="text">
+            </div>
+            <div>
+                <p class="p-register">Phone</p>
+                <input id="phone" name="phone" class="input-register" placeholder="Enter phone number"  autofocus="true" type="text">
+            </div>
+
+            <button id="btn_register" class="input-login">Register</button>
+            <input type="button" class="input-login" value="Cancel" onclick="window.location='/admin-dashboard';" />    
+        </fieldset>
+        
+    </form>
+    <script src="/faculty_script.js"></script>
+</body>
+</html>

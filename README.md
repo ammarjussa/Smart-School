@@ -1,2 +1,2 @@
-# Smart-School
-Online management system for schools
+# LoginSystem
+Implement Simple Login System with nodeJs and MongoDB.

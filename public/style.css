@@ -1,0 +1,45 @@
+/* css for index.html */
+body{
+    font-family: 'Verdana';
+}
+
+h1{
+    text-align: center;
+}
+.form-login{
+    margin: 8% 30% 10%;
+    width: 30%;
+    height: 80%;
+    border: 2px solid rgb(0, 0, 0);
+    padding: 30px;
+}
+.input-login{
+    margin: 2% 13% 3%;
+    height: 40px;
+    width: 300px;
+    font-size: 30px;
+}
+btn-index{
+    background-color:black;
+    color: aliceblue;
+    cursor: pointer;
+}
+
+
+/* css for register */
+.input-register{
+    margin: 5px 40px 15px;
+    height: 40px;
+    width: 400px;
+    font-size: 20px;
+}
+
+.p-register{
+    margin: 5px 40px 5px;
+    font-size: 20px;
+    font-display: bold;
+}
+fieldset{
+    margin: 5% 30% 10%;
+    padding: 30px;
+}
