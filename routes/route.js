@@ -22,14 +22,14 @@ module.exports = function(app){
     //     if(username === 'Ammar' && password === 'nice') {
     //         return res.send({
     //             success: true,
-    //             message: 'Sex ho gya'
+    //             message: 'Nice ho gya'
     //         });
     //     }
 
     //     else {
     //         return res.send({
     //             success: false,
-    //             message: 'Loray lag gye!'
+    //             message: 'lag gye!'
     //         })
     //     }
     // })
@@ -96,13 +96,13 @@ module.exports = function(app){
             if (m == "success"){
                 return res.send({
                     success: true,
-                    message: 'Sexy'
+                    message: 'Nice'
                 });
             }
             else{
                 return res.send({
                     success:false,
-                    message:'Not sexy'
+                    message:'Not nice'
                 });
             }
         });
@@ -118,13 +118,13 @@ module.exports = function(app){
             if (m == "success"){
                 return res.send({
                     success: true,
-                    message: 'Sexy'
+                    message: 'Nice'
                 });
             }
             else{
                 return res.send({
                     success:false,
-                    message:'Not sexy'
+                    message:'Not nice'
                 });    
             }
         });
