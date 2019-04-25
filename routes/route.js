@@ -108,25 +108,53 @@ module.exports = function(app){
         });
     });
 
-    app.post('/faculty-login', (req,res)=>{
+    app.post('/login', (req,res)=>{
         let account = {};
         account = {
+            "User":req.body.User,
             "email":req.body.email,
             "password":req.body.password
         };
-        db.validFaculty(account,function(m){
-            if (m == "success"){
-                return res.send({
-                    success: true,
-                    message: 'Nice'
-                });
-            }
-            else{
-                return res.send({
-                    success:false,
-                    message:'Not nice'
-                });    
-            }
-        });
+
+        console.log(`User: ${account.User}\n Email: ${account.email}\nPassword: ${account.password}`)
+
+        if(account.User == 'Admin') {
+            db.validAdmin(account, function(m){
+                if (m == "success"){
+                    return res.send({
+                        success: true,
+                        message: 'Nice'
+                    });
+                }
+                else{
+                    return res.send({
+                        success:false,
+                        message:'Not nice'
+                    });
+                }
+            });
+        }
+
+        else if(account.User == "Faculty") {
+            db.validFaculty(account,function(m){
+                if (m == "success"){
+                    return res.send({
+                        success: true,
+                        message: 'Nice'
+                    });
+                }
+                else{
+                    return res.send({
+                        success:false,
+                        message:'Not nice'
+                    });    
+                }
+            });
+        }
+
+        else {
+            res.send('404 Not Found!');
+        }
+     
     });
 }

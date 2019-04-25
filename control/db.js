@@ -124,7 +124,7 @@ module.exports.displayFaculty= (callback) => {
 }
 
 //Validating Admin Query
-module.exports.validAdmin = function(username, password ,callback){
+module.exports.validAdmin = function(account ,callback){
     
     var status = "undefined";
 
@@ -136,24 +136,24 @@ module.exports.validAdmin = function(username, password ,callback){
 
         const db = client.db(dbName); 
 
-        authUser(db,username, password);
+        authUser(db,account.email, account.password);
 
         client.close();
         
     }); 
     
-    var authUser = function(db, username, password){
+    var authUser = function(db, email, password){
        
         // Get the documents collection
         const collection = db.collection('Admins');
         
-        collection.findOne({"username":username},(err,items)=>{
+        collection.findOne({"email":email},(err,items)=>{
             
             if(items == null){
-                status = "Invalid username or password";
+                status = "Invalid email or password";
             }
             else if(!bcrypt.compareSync(password, items["password"])){
-                status = "invalid username or password!";
+                status = "invalid email or password!";
             }
             else{
                 status = "success";
