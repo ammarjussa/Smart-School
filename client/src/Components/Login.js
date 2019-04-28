@@ -6,14 +6,16 @@ import {Form,Button,Card,Col,Row,Modal,Spinner} from 'react-bootstrap'
 import '../App.css'
 import LoginNavbar from './LoginNavbar';
 
+const ip = 'localhost'
 
 class Login extends Component {
 
   state = {
-    username: '',
+    email: '',
     password: '',
     showModal: false,
-    connectionTimeout: false
+    connectionTimeout: false,
+    User: ''
   }
 
 
@@ -24,20 +26,38 @@ class Login extends Component {
 
   sendToServer = (message,event,cb) => {
     event.preventDefault()
-    console.log("sent", message.username )
-    this.setState({showModal: true})
-    let resp;
-    axios.post("/admin-login", {
-      username: message.username,
-      password: message.password
-    }).then((res) => {
+    if(this.state.User==="Select User...")
+    {
+      alert("Invalid Credentials")
+          this.setState({
+          email: '',
+          password: '',
+          User: ''
+        })
+    }
+    else{
+      console.log("sent", message.email )
+      this.setState({showModal: true})
+      let resp;
+      axios.post("http://localhost:8080/login", {
+        email: message.email,
+        password: message.password,
+        User: message.User
+      }).then((res) => {
 
-        resp = res.data.success
-        console.log(resp)
-        this.setState({showModal:false})
-        cb(resp,this.state)
-    })
+          console.log(res.data)
+          resp = res.data.success
+          // console.log(resp)
+          this.setState({showModal:false})
+          cb(resp,this.state)
+      })
+    }
     
+    
+  }
+
+  handleUser = (ev) => {
+    this.setState({User: ev.target.value})
   }
 
   handleSubmit = (isLogin,st) => {   
@@ -45,24 +65,34 @@ class Login extends Component {
     console.log("handlesubmit",isLogin)
     if(isLogin===true)
     {
-      Auth.login(()=>{
-        this.props.history.push("/app")
-      })
+      if(this.state.User==="Admin")
+      {
+        Auth.login(()=>{
+          this.props.history.push("/admin")
+        })
+      }
+      else if (this.state.User==="Faculty")
+      {
+        Auth.login(()=>{
+          this.props.history.push("/faculty")
+        })
+      }
     }
     else{
       // if(st.connectionTimeout===true)
       // {
       //   alert("Connection Timeout")
       //   this.setState({
-      //   username: '',
+      //   email: '',
       //   password: ''
       // })
       // }
       // else{
           alert("Invalid Credentials")
           this.setState({
-          username: '',
-          password: ''
+          email: '',
+          password: '',
+          User: ''
         })
       // }
       
@@ -76,13 +106,13 @@ class Login extends Component {
     <div>
 
       <Modal
-        className="App"
+        
         size="sm"
-        centered
         show={this.state.showModal}
+        centered
       >
-        <Modal.Body>
-            <Spinner animation="grow" variant="primary" />
+        <Modal.Body className="App">
+            <Spinner  animation="grow" variant="primary" />
             <Spinner animation="grow" variant="warning" />
             <Spinner animation="grow" variant="danger" />
         </Modal.Body>
@@ -100,14 +130,27 @@ class Login extends Component {
             <Form
             onSubmit={(e)=>this.sendToServer(this.state,e,(resp) => this.handleSubmit(resp))}
             >
+
+              <Form.Group as={Col}>
+                {/* <Form.Label>User</Form.Label> */}
+                <Form.Control 
+                name="user"
+                onChange={this.handleUser}
+                 as="select">
+                  <option>Select User...</option>
+                  <option value="Admin">Admin</option>
+                  <option value="Faculty">Faculty</option>
+                </Form.Control>
+              </Form.Group>
+
              <Form.Group as={Col}>
-               {/* <Form.Label>Username:</Form.Label> */}
+               {/* <Form.Label>email:</Form.Label> */}
                <Form.Control
                 required
-                type="text"
-                name="username"
-                placeholder="Enter Username"
-                value={this.state.username}
+                type="email"
+                name="email"
+                placeholder="Enter Email"
+                value={this.state.email}
                 onChange={this.handleChange}
                />
              </Form.Group >
@@ -124,7 +167,7 @@ class Login extends Component {
                />
              </Form.Group>
 
-              <Button type="submit">Login</Button>
+              <Button variant="outline-primary" type="submit">Login</Button>
           </Form>
           
             </Card.Body>

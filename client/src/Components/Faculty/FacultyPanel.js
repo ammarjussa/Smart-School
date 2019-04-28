@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import {Route,Switch} from 'react-router'
-import auth from '../auth';
+import auth from '../../auth';
 
 
-class MainMenu extends Component {
+class FacultyPanel extends Component {
   render() {
     return (
       <div>
-        <h1>MainMenu</h1>
+        <h1>Faculty Menu</h1>
         <button onClick={() => {
           auth.logout(()=> {
             this.props.history.push("/")
@@ -18,4 +18,4 @@ class MainMenu extends Component {
   }
 }
 
-export default MainMenu;
+export default FacultyPanel;

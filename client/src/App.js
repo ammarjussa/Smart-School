@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import {Redirect,Switch, Route} from 'react-router-dom'
+import {Redirect, Switch, Route} from 'react-router-dom'
 import Login from './Components/Login'
-import MainMenu from './Components/MainMenu'
+import AdminDashboard from './Components/Admin/AdminPanel'
+import FacultyDashboard from './Components/Faculty/FacultyPanel'
 import {ProtectedRoute} from './ProtectedRoute'
 import NotFound from './Components/NotFound'
 import './App.css';
-
 
 
 class App extends Component {
@@ -14,7 +14,8 @@ class App extends Component {
       <div>
         <Switch>
           <Route exact path="/" component={Login}/>
-          <ProtectedRoute path="/app" component={MainMenu}/>
+          <ProtectedRoute path="/admin" component={AdminDashboard}/>
+          <ProtectedRoute path="/faculty" component={FacultyDashboard}/>
           <Route path = "*" component={NotFound} />
         </Switch>
       </div>

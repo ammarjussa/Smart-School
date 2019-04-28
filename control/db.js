@@ -5,12 +5,9 @@ const bcrypt = require('bcrypt');
 const dbName = 'myproject';   
 const url = 'mongodb+srv://abdullah_138:mongoDbMA@ssms-01-11gdw.mongodb.net/test?retryWrites=true'
 
-
-
 //Add Students Query
-module.exports.addStudent = function (account){
+module.exports.addStudent = function (account,callback){
 
-    const message = '';
     MongoClient.connect(url, { useNewUrlParser: true }, (err,client)=>{
         if(err){
             console.log("Unable to connect to the server",err);
@@ -20,27 +17,26 @@ module.exports.addStudent = function (account){
 
         const db = client.db(dbName); 
 
-        insertDocuments(db,account, cb, function(message) {
+        insertDocu(db,account, function() {
             client.close();
-            cb(message);
         });
     });     
-    const insertDocuments = function(db, account, callback) {
+    const insertDocu = function(db, account) {
         // Get the documents collection
         const collection = db.collection('Students');
         
         collection.insertOne(account, function(err, result) {
             if(err) throw err;
-            console.log("Inserted 1 document into the collection");
-            message="Inserted";
-            callback(message);
+            console.log("Inserted Student Successfully");
+            callback(result);
         });
     }
 }
 
 
+
 //Add Faculty Query
-module.exports.addFaculty = function (account){
+module.exports.addFaculty = function (account,callback){
 
     MongoClient.connect(url, { useNewUrlParser: true }, (err,client)=>{
         if(err){
@@ -50,11 +46,13 @@ module.exports.addFaculty = function (account){
 
         const db = client.db(dbName); 
 
-        insertDocuments(db,account, function() {
+        insertDocuments(db,account,()=> {
             client.close();
-        });
+        });       
+
+
     });     
-    const insertDocuments = function(db, account, callback) {
+    const insertDocuments = function(db, account) {
         // Get the documents collection
         const collection = db.collection('Faculty');
         
@@ -66,16 +64,67 @@ module.exports.addFaculty = function (account){
 
             collection.insertOne(account, function(err, result) {
                 if(err) throw err;
-                console.log("Inserted 1 document into the collection");
-                callback();
+                console.log("Inserted Faculty Successfully");
+                callback(result);
             });
         });
     }
 }
 
+module.exports.deleteStudent = (name, callback) => {
+    MongoClient.connect(url, { useNewUrlParser: true }, (err,client)=>{
+        if(err){
+            console.log("Unable to connect to the server",err);
+        }
+        console.log("Connect to server successfully.");
+
+        const db = client.db(dbName); 
+
+        deleteDocument(db, ()=> {
+            client.close();
+        });
+
+    });
+    
+    const deleteDocument = (db,name)=> {
+        const collection = db.collection('Students');
+        collection.deleteOne({name: name}, (err, obj)=> {
+            if (err) throw err;
+            console.log('Student deleted Successfully');
+            callback(obj);
+        })
+    }
+}
+
+
+module.exports.deleteFaculty = (email, callback) => {
+    MongoClient.connect(url, { useNewUrlParser: true }, (err,client)=>{
+        if(err){
+            console.log("Unable to connect to the server",err);
+        }
+        console.log("Connect to server successfully.");
+
+        const db = client.db(dbName); 
+
+        deleteDocument(db, ()=> {
+            client.close();
+        });
+
+    });
+    
+    const deleteDocument = (db, email)=> {
+        const collection = db.collection('Faculty');
+        collection.deleteOne({email: email}, (err, obj)=> {
+            if (err) throw err;
+            console.log('Faculty deleted successfully');
+            callback(obj);
+
+        })
+    }
+}
 
 //Displaying Students Query
-module.exports.displayStudent= (callback) => {
+module.exports.displayStudents= (callback) => {
     MongoClient.connect(url, { useNewUrlParser: true }, (err,client)=>{
         if(err){
             console.log("Unable to connect to the server",err);
@@ -92,7 +141,8 @@ module.exports.displayStudent= (callback) => {
 
     var findStudent = (db) => {
         const collection = db.collection('Students')
-        collection.findOne((err,items) => {
+        collection.find({}).toArray((err,items) => {
+            if (err) throw err;
             callback(items);
         });
     }
@@ -116,8 +166,9 @@ module.exports.displayFaculty= (callback) => {
     }); 
 
     var findFaculty = (db) => {
-        const collection = db.collection('Faculty')
-        collection.findOne((err,items) => {
+        const collection = db.collection('Faculty');
+        collection.find({}).toArray((err,items) => {
+            if (err) throw err;
             callback(items);
         });
     }
