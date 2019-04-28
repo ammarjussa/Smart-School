@@ -121,7 +121,7 @@ class Faculty extends Component {
                 prevState.facultyData = fd
                 this.setState(prevState)
                 this.handleDeleteModalClose()
-            }).catch((e) => alert(e))
+            }).catch((e) => console.log(e))
 
             })
         })

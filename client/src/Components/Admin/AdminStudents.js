@@ -60,7 +60,7 @@ componentDidMount(){
               studentData: res.data.students,
               studentDataBackup : res.data.students
           })
-    }).catch((e) => alert(e))
+    }).catch((e) => console.log(e))
     
 }
 
@@ -117,7 +117,7 @@ handleDelete = (e) => {
           prevState.studentData = fd
           this.setState(prevState)
           this.handleDeleteModalClose()
-      }).catch((e) => alert(e))
+      }).catch((e) => console.log(e))
 
       })
   })
@@ -201,7 +201,7 @@ handleSubmitAddStudent = (e) => {
           }
 
 
-      }).catch((e) => alert(e))
+      }).catch((e) => console.log(e))
 }
 
 handleEdit = () => {
