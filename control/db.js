@@ -80,7 +80,7 @@ module.exports.deleteStudent = (name, callback) => {
 
         const db = client.db(dbName); 
 
-        deleteDocument(db, ()=> {
+        deleteDocument(db, name, ()=> {
             client.close();
         });
 
@@ -106,7 +106,7 @@ module.exports.deleteFaculty = (email, callback) => {
 
         const db = client.db(dbName); 
 
-        deleteDocument(db, ()=> {
+        deleteDocument(db, email, ()=> {
             client.close();
         });
 
