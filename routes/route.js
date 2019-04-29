@@ -68,10 +68,9 @@ module.exports = function(app){
     });
 
     app.post('/deleteFaculty', (req,res)=> {
-        let facId = req.body.facultyid;
         let email = req.body.email;
-        console.log(`${facId}, ${email}`)
-        db.deleteFaculty(facId, email, (obj)=> {
+        console.log(`${email}`)
+        db.deleteFaculty(email, (obj)=> {
             console.log(`Deleted Faculty!`);
             return res.send({message: 'Success'});
         })

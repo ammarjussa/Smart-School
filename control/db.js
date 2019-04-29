@@ -97,7 +97,7 @@ module.exports.deleteStudent = (name, callback) => {
 }
 
 
-module.exports.deleteFaculty = (email, callback) => {
+module.exports.deleteFaculty = (email, cb) => {
     MongoClient.connect(url, { useNewUrlParser: true }, (err,client)=>{
         if(err){
             console.log("Unable to connect to the server",err);
@@ -106,9 +106,9 @@ module.exports.deleteFaculty = (email, callback) => {
 
         const db = client.db(dbName); 
 
-        deleteDocument(db, email, ()=> {
-            client.close();
-        });
+        deleteDocument(db, email);
+        
+        client.close();
 
     });
     
@@ -117,8 +117,7 @@ module.exports.deleteFaculty = (email, callback) => {
         collection.deleteOne({email: email}, (err, obj)=> {
             if (err) throw err;
             console.log('Faculty deleted successfully');
-            callback(obj);
-
+            cb(obj);
         })
     }
 }
