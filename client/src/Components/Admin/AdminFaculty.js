@@ -56,7 +56,7 @@ class Faculty extends Component {
     componentDidMount(){
         //Extract data 
         let resp;
-        axios.post("http://localhost:8080/faculty","ack").then((res) => {
+        axios.post("/faculty","ack").then((res) => {
             
             //Make all check false
             this.setState({
@@ -111,7 +111,7 @@ class Faculty extends Component {
                     email: fObject.email
                 }
         
-            axios.post("http://localhost:8080/deleteFaculty",del_Obj).then((res) => {
+            axios.post("/deleteFaculty",del_Obj).then((res) => {
                 // var prevState = Object.assign({},this.state)
                 // prevState.facultyData = this.state.facultyData.filter((f) => f.facultyid !== del_Obj.facultyid && f.email !== del_Obj.email)
                 // this.setState(prevState)
@@ -186,7 +186,7 @@ class Faculty extends Component {
             }
 
             console.log(facultyInfo)
-            axios.post("http://localhost:8080/registerFaculty",facultyInfo).then((res)=>{
+            axios.post("/registerFaculty",facultyInfo).then((res)=>{
                 console.log(res.data.message)
                 if(res.data.message === "Success")
                 {

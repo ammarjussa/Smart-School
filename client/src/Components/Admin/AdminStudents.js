@@ -53,7 +53,7 @@ class StudentsTab extends Component {
 componentDidMount(){
     //Extract data 
     let resp;
-    axios.post("http://localhost:8080/students","ack").then((res) => {
+    axios.post("/students","ack").then((res) => {
         
         //Make all check false
           this.setState({
