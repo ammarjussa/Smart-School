@@ -13,24 +13,52 @@ import {
     Modal,
     Form
 } from 'react-bootstrap';
-import { FaEye,FaTrashAlt,FaPlus} from "react-icons/fa";
+import { FaEye,FaTrashAlt,FaPlus, FaSleigh, FaTruckMonster} from "react-icons/fa";
 import { Input, ModalHeader } from 'semantic-ui-react';
 import axios from "axios"
-
-const ip = 'localhost'
 
 class Faculty extends Component {
 
     state = {
-        facultyData: [],
+        facultyData:  [
+            {
+                facultyid: 1,
+                name: '--',
+                subject: '--',
+                email: '--',
+            },
+            {
+                facultyid: 1,
+                name: '--',
+                subject: '--',
+                email: '--',
+            },
+            {
+                facultyid: 1,
+                name: '--',
+                subject: '--',
+                email: '--',
+            },
+            {
+                facultyid: 1,
+                name: '--',
+                subject: '--',
+                email: '--',
+            },
+            {
+                facultyid: 1,
+                name: '--',
+                subject: '--',
+                email: '--',
+            },
+          
+         ],
         facultyDataBackup: [],
         selectAll: false,
         facultyid: '',
         facultyname: '',
-        view:{
-            id: '',
-            isview: false
-        },
+        view_isview:false,
+        view_object: {},
         edit:{
             id: '',
             isEdit: false
@@ -88,13 +116,13 @@ class Faculty extends Component {
 
     handleViewModalClose = () =>{
         var prevState = Object.assign({},this.state)
-        prevState.view.isview = false
+        prevState.view_isview = false
         this.setState(prevState)
     } 
 
     handleViewModalShow = (ev) =>{
         var prevState = Object.assign({},this.state)
-        prevState.view.isview = true
+        prevState.view_isview = true
         this.setState(prevState)
     } 
 
@@ -121,7 +149,7 @@ class Faculty extends Component {
                 prevState.facultyData = fd
                 this.setState(prevState)
                 this.handleDeleteModalClose()
-            }).catch((e) => console.log(e))
+            }).catch((e) => alert(e))
 
             })
         })
@@ -132,7 +160,7 @@ class Faculty extends Component {
     get_faculty(id,cb) {
         let count = 0
         this.state.facultyData.forEach(f => {
-            if(f.facultyid===id && count<1)
+            if(f.email===id && count<1)
             {
                 count = count + 1
                 console.log(f)
@@ -148,10 +176,14 @@ class Faculty extends Component {
         this.setState(prevState)
     }
 
-    handleView = () => {
+    handleView = (e,id) => {
+        this.get_faculty(id,(fObject) => {
+            this.setState({
+                view_object: fObject,
+                view_isview : true
+            })
 
-        //this.handleViewModalShow()
-        //this.handleViewModalClose()
+        })
     }
 
     handleAddModalClose = () =>{
@@ -188,6 +220,7 @@ class Faculty extends Component {
             console.log(facultyInfo)
             axios.post("/registerFaculty",facultyInfo).then((res)=>{
                 console.log(res.data.message)
+                this.setState({adding:false})
                 if(res.data.message === "Success")
                 {
                     var prevState = Object.assign({},this.state)
@@ -229,10 +262,9 @@ class Faculty extends Component {
         this.setState(prevState)
     }
 
-    adding = () =>{
-        var prevState = Object.assign({},this.state)
-        prevState.adding = true
-        this.setState(prevState)
+    adding = (e) =>{
+        e.preventDefault()
+        this.setState({adding: true})
     }
 
     handleSearch = (e) => {
@@ -244,8 +276,6 @@ class Faculty extends Component {
                     return {facultyData: prevState.facultyDataBackup.filter((f)=> f.name.toLowerCase().includes(tempvalue.toLowerCase()))}
             })
         })
-        
-        
     }
 
     render() {
@@ -255,7 +285,7 @@ class Faculty extends Component {
                 <h1>Faculty Information</h1>
                 {/* BreadCrumbs */}
                 <Breadcrumb>
-                    <Breadcrumb.Item>Admin</Breadcrumb.Item>
+                    <Breadcrumb.Item href="/admin/Dashboard">Admin</Breadcrumb.Item>
                     <Breadcrumb.Item active>View Faculty</Breadcrumb.Item>
                 </Breadcrumb>
 
@@ -280,9 +310,9 @@ class Faculty extends Component {
 
                 {/* View/Edit Model */}
                 <Modal
-                    show={this.state.view.isview}
+                    show={this.state.view_isview}
                     onHide={this.handleViewModalClose}
-                    size="sm"
+                    size="md"
                     centered
                 >
                     <Modal.Header closeButton>
@@ -290,7 +320,56 @@ class Faculty extends Component {
                     </Modal.Header>
                     <Modal.Body>
                         <Container>
-                            this.getFaculty()
+                            <Row>
+                                <Col>
+                                    <b>Name:</b>
+                                </Col>
+                                <Col>
+                                    {this.state.view_object.name}
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col>
+                                    <b>Gender:</b>
+                                </Col>
+                                <Col>
+                                    {this.state.view_object.gender}
+                                </Col>
+                                
+                            </Row>
+                            <Row>
+                            <Col>
+                                    <b>Contact:</b>
+                                </Col>
+                                <Col>
+                                    {this.state.view_object.contact}
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col>
+                                    <b>Email:</b>
+                                </Col>
+                                <Col>
+                                    {this.state.view_object.email}
+                                </Col>
+                            </Row>
+                            
+                            <Row>
+                                <Col>
+                                    <b>Class:</b>
+                                </Col>
+                                <Col>
+                                    {this.state.view_object.class}
+                                </Col>
+                            </Row>
+                            <Row>
+                            <Col>
+                                    <b>Subject:</b>
+                                </Col>
+                                <Col>
+                                    {this.state.view_object.subject}
+                                </Col>
+                            </Row>
                         </Container>
                     </Modal.Body>
                     <Modal.Footer>
@@ -432,7 +511,7 @@ class Faculty extends Component {
                                                 </Form.Group>
                                         </Form.Row>
 
-                                        {this.state.addding? <Button disabled type="submit"><FaPlus/> Adding.. </Button> : <Button type="submit" onClick={this.adding}><FaPlus/> Add </Button>}
+                                        {this.state.adding? <Button disabled type="submit"><FaPlus/> Adding.. </Button> : <Button type="submit" ><FaPlus/> Add </Button>}
                                         </div>
                                 </Form>
                             </Card.Body>
@@ -448,12 +527,21 @@ class Faculty extends Component {
 
 
                 {/* Search Box and Add Faculty */}
-                <div style={{display: 'flex', "margin": "20px", flex:"1"}}>
-                     <span style={{left: "0", }}><Input type="text" value={this.state.Search} onChange={this.handleSearch} placeholder="Search Faculty name"></Input></span>
-                     <span  style={{right:"0",}}><Button onClick={this.handleAddModalShow}> <FaPlus/> Add</Button></span>
-                </div>   
+                <Container>
+                  <Row>
+                    <Col xs={7} sm={9}>
+                    <Input type="text" value={this.state.Search} onChange={this.handleSearch} placeholder="Search Faculty name"></Input>
+                    </Col>
+                    <Col>
+                    <Button onClick={this.handleAddModalShow}> <FaPlus/> Add Faculty</Button>
+                    </Col>
+                  </Row>
+                </Container>
 
 
+
+
+                <br/>
 
                 {/* Table */}
                 <Table responsive hover>
@@ -461,24 +549,23 @@ class Faculty extends Component {
                         <th><InputGroup.Checkbox checked={this.state.selectAll} onChange={this.handleChangeSelectAll}/></th>
                         <th> id</th>
                         <th> Name</th>
-                        <th> Contact </th>
+                        <th> Email </th>
                         <th>     </th>
                     </thead>
                     <tbody>
 
                         {
-                            this.state.facultyData.map(({ facultyid, name,subject,contact},id) => 
+                            this.state.facultyData.map(({ facultyid, name,subject,email,contact},id) => 
                                 <tr key={id}>
                                     <td><InputGroup.Prepend><InputGroup.Checkbox checked={this.state.facultyData.check} onChange={this.handleChangeCheckbox}/> </InputGroup.Prepend> </td>
                                     <td>{id}</td>
                                     <td>{name}</td>
-                                    <td>{contact}</td>
-                                    <td></td>
+                                    <td>{email}</td>
                                     <td>
                                         {/* <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">View/Edit</Tooltip>}>
                                             <span className="d-inline-block"> */}
-                                                <Button variant="success" onClick={this.handleView}> <FaEye/> View/Edit</Button>
-                                                <Button variant="danger" onClick={(e) => this.handleDeleteTid(e,facultyid)}> <FaTrashAlt/> Delete</Button>
+                                                <Button variant="success" onClick={(e) => this.handleView(e,email)}> <FaEye/> View/Edit</Button>
+                                                <Button variant="danger" onClick={(e) => this.handleDeleteTid(e,email)}> <FaTrashAlt/> Delete</Button>
                                             {/* </span>
                                             </OverlayTrigger> */}
                                     </td>
@@ -490,7 +577,6 @@ class Faculty extends Component {
 
                     </tbody>
                 </Table>
-
             </div>
         );
     }

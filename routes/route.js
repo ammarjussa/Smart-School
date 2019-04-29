@@ -6,6 +6,38 @@ var path = require('path');
 
 module.exports = function(app){
 
+    app.post('/showclass',(req,res)=> {
+        db.showClasses((obj)=> {
+            console.log('Classes Showed');
+            return res.send({classes: obj});
+        })
+    });
+
+    app.post('/addclass', (req,res)=> {
+        // mysections = []
+        // mysections.push(req.body.section);
+        account = {
+            "theclass":req.body.theclass,
+            "section": req.body.section,
+            "cap":req.body.cap
+        }
+        console.log(`${account.theclass}, ${account.section}, ${account.cap}`);
+        db.addClasses(account, (obj)=> {
+            console.log('Class Added');
+            return res.send({message: 'Success'});
+        })
+    });
+
+    // app.post('/addsection', (req,res)=> {
+    //    var classes = req.body.theclass;
+    //    var section = req.body.section;
+
+    //    db.addSections(classes, section, ()=> {
+    //        console.log('Section Added');
+    //        return res.send({message: 'Success'});
+    //    })
+    // });
+
     app.post('/students', (req,res)=>{
         db.displayStudents((items)=> {
             console.log('Displaying Students.....');
@@ -42,9 +74,32 @@ module.exports = function(app){
         
     });
 
+    app.post('/updateStudent', (req,res)=>{
+        account = {
+            "name":req.body.name,
+            "theclass":req.body.theclass,
+            "section":req.body.section,
+            "pname":req.body.pname,
+            "pemail": req.body.pemail,
+            "pcontact":req.body.pcontact,
+            "gender": req.body.gender
+        };
+        
+
+        console.log(`${account.name}, ${account.pcontact}`);
+
+        db.modifyStudent(account,() => {
+            console.log('Student updated');
+            return res.send({message: 'Success'});
+
+        });     
+        
+    });
+
+    
+
     app.post('/registerFaculty', (req,res)=>{
         let account = {};
-        let myid=0;
          
         account = {
             "name":req.body.name,
@@ -60,6 +115,27 @@ module.exports = function(app){
         console.log(`${account.name}, ${account.contact}`);
     
         db.addFaculty(account,(result)=> {
+            console.log('Faculty Added!');
+            return res.send({message: 'Success'});
+        });
+    });
+
+    app.post('/updateFaculty', (req,res)=>{
+        let account = {};
+         
+        account = {
+            "name":req.body.name,
+            "class":req.body.class,
+            "section":req.body.section,
+            "email": req.body.email,
+            "gender":req.body.gender,
+            "contact":req.body.contact,
+            "subject":req.body.subject
+        };
+
+        console.log(`${account.name}, ${account.contact}`);
+    
+        db.modifyFaculty(account,()=> {
             console.log('Faculty Added!');
             return res.send({message: 'Success'});
         });
@@ -113,6 +189,7 @@ module.exports = function(app){
         else if(account.User == "Faculty") {
             db.validFaculty(account,function(m){
                 if (m == "success"){
+                    
                     return res.send({
                         success: true,
                         message: 'Nice'

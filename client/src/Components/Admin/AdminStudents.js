@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {Route,Switch} from 'react-router'
-import {Table, InputGroup, Row, Col } from 'react-bootstrap'
+import {Table, InputGroup, Row, Col, Nav } from 'react-bootstrap'
 import { 
     Card,
     Spinner,
@@ -10,25 +10,53 @@ import {
     Container,
     Breadcrumb,
     Modal,
-    Form
+    Form,
+    Navbar
 } from 'react-bootstrap';
 import { FaEye,FaTrashAlt,FaPlus} from "react-icons/fa";
 import { Input, ModalHeader } from 'semantic-ui-react';
 import axios from "axios"
 
 
-const ip = 'localhost'
-
 class StudentsTab extends Component {
   
   state = {
-    studentData: [],
+    studentData: [
+      {
+          studentid: 1,
+          name: '--',
+          theclass: '-',
+          section: '-',
+      },
+      {
+          studentid: 1,
+          name: '--',
+          theclass: '-',
+          section: '-',
+      },
+      {
+          studentid: 1,
+          name: '--',
+          theclass: '-',
+          section: '-',
+      },
+      {
+          studentid: 1,
+          name: '--',
+          theclass: '-',
+          section: '-',
+      },
+      {
+          studentid: 1,
+          name: '--',
+          theclass: '-',
+          section: '-',
+      },
+   ],
     studentDataBackup: [],
     selectAll: false,
-    view:{
-        id: '',
-        isview: false
-    },
+    view_isview: false,
+    view_object: {},
     edit:{
         id: '',
         isEdit: false
@@ -53,6 +81,16 @@ class StudentsTab extends Component {
 componentDidMount(){
     //Extract data 
     let resp;
+    // axios.post("/students","ack").then((res) => {
+        
+        //     //Make all check false
+        //       this.setState({
+            //           studentData: res.data.students,
+            //           studentDataBackup : res.data.students
+            //       })
+            // }).catch((e) => alert(e))
+            
+    let path = "/students"
     axios.post("/students","ack").then((res) => {
         
         //Make all check false
@@ -60,10 +98,8 @@ componentDidMount(){
               studentData: res.data.students,
               studentDataBackup : res.data.students
           })
-    }).catch((e) => console.log(e))
-    
+    }).catch((e) => alert(e))
 }
-
 
 handleChangeCheckbox = (e) => {
   console.log(e)
@@ -84,13 +120,13 @@ handleDeleteModalShow = () =>{
 
 handleViewModalClose = () =>{
   var prevState = Object.assign({},this.state)
-  prevState.view.isview = false
+  prevState.view_isview = false
   this.setState(prevState)
 } 
 
 handleViewModalShow = (ev) =>{
   var prevState = Object.assign({},this.state)
-  prevState.view.isview = true
+  prevState.view_isview = true
   this.setState(prevState)
 } 
 
@@ -106,10 +142,10 @@ handleDelete = (e) => {
           let del_Obj = {
               name:fObject.name
           }
-  
-      axios.post("http://localhost:8080/deleteStudent",del_Obj).then((res) => {
+
+      axios.post("/deleteStudent",del_Obj).then((res) => {
           // var prevState = Object.assign({},this.state)
-          // prevState.facultyData = this.state.facultyData.filter((f) => f.facultyid !== del_Obj.facultyid && f.email !== del_Obj.email)
+          // prevState.facultyData = this.state.facultyData.filter((f) => f.studentid !== del_Obj.studentid && f.email !== del_Obj.email)
           // this.setState(prevState)
           var prevState = Object.assign({},this.state)
           let fd = prevState.studentData
@@ -117,7 +153,7 @@ handleDelete = (e) => {
           prevState.studentData = fd
           this.setState(prevState)
           this.handleDeleteModalClose()
-      }).catch((e) => console.log(e))
+      }).catch((e) => alert(e))
 
       })
   })
@@ -137,17 +173,21 @@ get_student(id,cb) {
   });
 }
 
+handleView = (e,id) => {
+    this.get_student(id,(fObject) => {
+        this.setState({
+            view_object: fObject,
+            view_isview : true
+        })
+
+    })
+}
+
 handleDeleteTid = (e,id)  =>{
   var prevState = Object.assign({},this.state)
   prevState.delete_showmodal=true
   prevState.delete_last_deleted_id = id
   this.setState(prevState)
-}
-
-handleView = () => {
-
-  //this.handleViewModalShow()
-  //this.handleViewModalClose()
 }
 
 handleAddModalClose = () =>{
@@ -178,7 +218,7 @@ handleSubmitAddStudent = (e) => {
       }
 
       console.log(studentInfo)
-      axios.post("http://localhost:8080/registerStudent",studentInfo).then((res)=>{
+      axios.post("/registerStudent",studentInfo).then((res)=>{
           console.log(res.data.message)
           if(res.data.message === "Success")
           {
@@ -201,7 +241,7 @@ handleSubmitAddStudent = (e) => {
           }
 
 
-      }).catch((e) => console.log(e))
+      }).catch((e) => alert(e))
 }
 
 handleEdit = () => {
@@ -238,7 +278,7 @@ handleSearch = (e) => {
         <div>
                 {/* BreadCrumbs */}
                 <Breadcrumb>
-                    <Breadcrumb.Item>Admin</Breadcrumb.Item>
+                    <Breadcrumb.Item href="/admin/Dashboard">Admin</Breadcrumb.Item>
                     <Breadcrumb.Item active>View Students</Breadcrumb.Item>
                 </Breadcrumb>
 
@@ -263,9 +303,9 @@ handleSearch = (e) => {
 
                 {/* View/Edit Model */}
                 <Modal
-                    show={this.state.view.isview}
+                    show={this.state.view_isview}
                     onHide={this.handleViewModalClose}
-                    size="sm"
+                    size="md"
                     centered
                 >
                     <Modal.Header closeButton>
@@ -273,7 +313,65 @@ handleSearch = (e) => {
                     </Modal.Header>
                     <Modal.Body>
                         <Container>
-                            this.getFaculty()
+                            <Row><h4>Personal Information</h4></Row>
+                            <Row>
+                                <Col>
+                                    <b>Name:</b>
+                                </Col>
+                                <Col>
+                                    {this.state.view_object.name}
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col>
+                                    <b>Gender:</b>
+                                </Col>
+                                <Col>
+                                    {this.state.view_object.gender}
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col>
+                                    <b>Class:</b>
+                                </Col>
+                                <Col>
+                                    {this.state.view_object.theclass}
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col>
+                                    <b>Section:</b>
+                                </Col>
+                                <Col>
+                                    {this.state.view_object.section}
+                                </Col>
+                            </Row>
+                            <br/>
+                            <Row><h4>Parent's/Guardian's Information</h4></Row>
+                            <Row>
+                                <Col>
+                                    <b>Name:</b>
+                                </Col>
+                                <Col>
+                                    {this.state.view_object.pname}
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col>
+                                    <b>Email:</b>
+                                </Col>
+                                <Col>
+                                    {this.state.view_object.pemail}
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col>
+                                    <b>Contact:</b>
+                                </Col>
+                                <Col>
+                                    {this.state.view_object.pcontact}
+                                </Col>
+                            </Row>
                         </Container>
                     </Modal.Body>
                     <Modal.Footer>
@@ -413,12 +511,33 @@ handleSearch = (e) => {
 
 
                 {/* Search Box and Add Faculty */}
-                <div style={{display: 'flex', "margin": "20px"}}>
-                     <span style={{justifyContent:"flex-start"}}><Input type="text" value={this.state.Search} onChange={this.handleSearch} placeholder="Search Student name"></Input></span>
-                     <span  style={{justifyContent:"flex-end"}}><Button onClick={this.handleAddModalShow}> <FaPlus/> Add</Button></span>
-                </div>   
+                
+                {/* <Navbar sticky="top">
+                <Input type="text" value={this.state.Search} onChange={this.handleSearch} placeholder="Search Student name"></Input>
+                      <Navbar.Collapse className="justify-content-end" >
+                            <Button onClick={this.handleAddModalShow}> <FaPlus/> Add Student</Button>
+                      </Navbar.Collapse>
+                </Navbar> */}
+
+                <Container>
+                  <Row>
+                    <Col xs={7} sm={9}>
+                    <Input type="text" value={this.state.Search} onChange={this.handleSearch} placeholder="Search Student name"></Input>
+                    </Col>
+                    <Col>
+                    <Button onClick={this.handleAddModalShow}> <FaPlus/> Add Student</Button>
+                    </Col>
+                  </Row>
+                </Container>
 
 
+
+                {/* <div style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                     <span style={{ paddingLeft: "10px" }}><Input type="text" value={this.state.Search} onChange={this.handleSearch} placeholder="Search Student name"></Input></span>
+                     <span  style={{ paddingLeft: "600px" }}><Button onClick={this.handleAddModalShow}> <FaPlus/> Add Student</Button></span>
+                </div>    */}
+
+                <br/>
 
                 {/* Table */}
                 <Table responsive hover>
@@ -438,11 +557,10 @@ handleSearch = (e) => {
                                     <td>{id}</td>
                                     <td>{name}</td>
                                     <td>{`${theclass}-${section}`}</td>
-                                    <td></td>
                                     <td>
                                         {/* <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">View/Edit</Tooltip>}>
                                             <span className="d-inline-block"> */}
-                                                <Button variant="success" onClick={this.handleView}> <FaEye/> View/Edit</Button>
+                                                <Button variant="success" onClick={(e)=>this.handleView(e,name)}> <FaEye/> View/Edit</Button>
                                                 <Button variant="danger" onClick={(e) => this.handleDeleteTid(e,name)}> <FaTrashAlt/> Delete</Button>
                                             {/* </span>
                                             </OverlayTrigger> */}

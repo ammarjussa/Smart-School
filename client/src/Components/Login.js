@@ -6,7 +6,6 @@ import {Form,Button,Card,Col,Row,Modal,Spinner} from 'react-bootstrap'
 import '../App.css'
 import LoginNavbar from './LoginNavbar';
 
-const ip = 'localhost'
 
 class Login extends Component {
 
@@ -15,7 +14,9 @@ class Login extends Component {
     password: '',
     showModal: false,
     connectionTimeout: false,
-    User: ''
+    User: '',
+    facultyProfile: null,
+    adminProfile: null,
   }
 
 
@@ -47,9 +48,10 @@ class Login extends Component {
 
           console.log(res.data)
           resp = res.data.success
+          let Profile = res.data.Profile
           // console.log(resp)
           this.setState({showModal:false})
-          cb(resp,this.state)
+          cb(resp,Profile,this.state)
       })
     }
     
@@ -60,19 +62,21 @@ class Login extends Component {
     this.setState({User: ev.target.value})
   }
 
-  handleSubmit = (isLogin,st) => {   
+  handleSubmit = (isLogin,profile,st) => {   
 
     console.log("handlesubmit",isLogin)
     if(isLogin===true)
     {
       if(this.state.User==="Admin")
       {
+        this.setState({adminProfile: profile})
         Auth.login(()=>{
           this.props.history.push("/admin")
         })
       }
       else if (this.state.User==="Faculty")
       {
+        this.setState({facultyProfile: profile})
         Auth.login(()=>{
           this.props.history.push("/faculty")
         })
@@ -128,7 +132,7 @@ class Login extends Component {
             <Card.Body>
             
             <Form
-            onSubmit={(e)=>this.sendToServer(this.state,e,(resp) => this.handleSubmit(resp))}
+            onSubmit={(e)=>this.sendToServer(this.state,e,(resp,profile) => this.handleSubmit(resp,profile))}
             >
 
               <Form.Group as={Col}>
