@@ -39,7 +39,7 @@ class Login extends Component {
       console.log("sent", message.email )
       this.setState({showModal: true})
       let resp;
-      axios.post("http://localhost:8080/login", {
+      axios.post("/login", {
         email: message.email,
         password: message.password,
         User: message.User
