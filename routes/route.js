@@ -45,26 +45,24 @@ module.exports = function(app){
     app.post('/registerFaculty', (req,res)=>{
         let account = {};
         let myid=0;
-        // var theid = updater((id) => {
-        //     myid=id;
-        // })    
-            account = {
-                "name":req.body.name,
-                "password":req.body.password,
-                "class":req.body.class,
-                "section":req.body.section,
-                "email": req.body.email,
-                "gender":req.body.gender,
-                "contact":req.body.contact,
-                "subject":req.body.subject
-            };
+         
+        account = {
+            "name":req.body.name,
+            "password":req.body.password,
+            "class":req.body.class,
+            "section":req.body.section,
+            "email": req.body.email,
+            "gender":req.body.gender,
+            "contact":req.body.contact,
+            "subject":req.body.subject
+        };
 
-            console.log(`${account.name}, ${account.contact}`);
-        
-            db.addFaculty(account,(result)=> {
-                console.log('Faculty Added!');
-                return res.send({message: 'Success'});
-            });
+        console.log(`${account.name}, ${account.contact}`);
+    
+        db.addFaculty(account,(result)=> {
+            console.log('Faculty Added!');
+            return res.send({message: 'Success'});
+        });
     });
 
     app.post('/deleteFaculty', (req,res)=> {

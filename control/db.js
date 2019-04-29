@@ -129,6 +129,7 @@ module.exports.displayStudents= (callback) => {
             console.log("Unable to connect to the server",err);
         }
         console.log("Connect to server successfully.");
+        console.log(dbName);
 
         const db = client.db(dbName); 
 
