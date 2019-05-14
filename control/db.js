@@ -1,11 +1,14 @@
 const MongoClient = require('mongodb').MongoClient;
 const bcrypt = require('bcrypt');
 
+
 // database init, "my project" is the name of the database
 const dbName = 'myproject';   
 const url = 'mongodb+srv://abdullah_138:mongoDbMA@ssms-01-11gdw.mongodb.net/test?retryWrites=true'
 
+/////////////////////////////////CLASS/////////////////////////////////////////////////////////////
 
+/*Add Class*/
 module.exports.addClasses = function (account, callback) {
     MongoClient.connect(url, { useNewUrlParser: true }, (err,client)=>{
         if(err){
@@ -16,23 +19,39 @@ module.exports.addClasses = function (account, callback) {
 
         const db = client.db(dbName); 
 
-        addClass(db);
+        addClass(db,account, ()=> {
+            client.close();
+        });
 
-        client.close();
     });
 
     const addClass= function(db,account) {
         const collection = db.collection('Classes');
-        collection.insertOne(account, (err, obj)=>{
-            if (err) console.log(err);
-            console.log("Adding Class");
-            callback(obj);
-        });
+
+        getNextSequenceValueClass(db, "classid", (theid)=> {
+            account["_id"]= theid;
+            collection.insertOne(account, (err, obj)=>{
+                if (err) console.log(err);
+                console.log("Adding Class");
+                callback(obj);
+            });
+        });    
     };
+
+    const getNextSequenceValueClass= (db,sequenceName,cb) => {
+        db.collection('ClassCounter').findOneAndUpdate(
+           {_id: sequenceName },
+           {$inc:{sequence_value:1}},
+           (err,result)=> {
+               console.log(result.value.sequence_value);
+               cb(result.value.sequence_value);
+           });
+    }
 
 
 };
 
+/*Show Class*/
 module.exports.showClasses = function (callback) {
     MongoClient.connect(url, { useNewUrlParser: true }, (err,client)=>{
         if(err){
@@ -60,31 +79,111 @@ module.exports.showClasses = function (callback) {
     };
 }
 
-// module.exports.addSections = function(classes, section, callback) {
-//     MongoClient.connect(url, { useNewUrlParser: true }, (err,client)=>{
-//         if(err){
-//             console.log("Unable to connect to the server",err);
-//             message='Error connecting server'
-//         }
-//         console.log("Connect to server successfully.");
 
-//         const db = client.db(dbName); 
+//Delete Class
+module.exports.deleteClass = (id, cb) => {
+    MongoClient.connect(url, { useNewUrlParser: true }, (err,client)=>{
+        if(err){
+            console.log("Unable to connect to the server",err);
+        }
+        console.log("Connect to server successfully.");
 
-//         addSec(db,classes,section,cap);
+        const db = client.db(dbName); 
 
-//         client.close();
-//     });
+        deleteTheDocument(db, id);
+        
+        client.close();
 
-//     const addSec = function(db,classes,section) {
-//         const collection = db.collection('Classes');
-//         collection.updateOne({theclass: classes}, {$push: {sections: section}}, (err,obj)=> {
-//             if (err) throw err;
-//             console.log('Adding Section');
-//             callback();
-//         })
-//     }
-// }
+    });
+    
+    const deleteTheDocument = (db, id)=> {
+        const collection = db.collection('Classes');
+        collection.deleteOne({_id: id}, (err, obj)=> {
+            if (err) throw err;
+            console.log('Class deleted successfully');
+            cb(obj);
+        })
+    }
+}
 
+/*Add Sections */
+module.exports.addSections = function(classes, section, callback) {
+    MongoClient.connect(url, { useNewUrlParser: true }, (err,client)=>{
+        if(err){
+            console.log("Unable to connect to the server",err);
+            message='Error connecting server'
+        }
+        console.log("Connect to server successfully.");
+
+        const db = client.db(dbName); 
+
+        addSec(db,classes,section,cap);
+
+        client.close();
+    });
+
+    const addSec = function(db,classes,section) {
+        const collection = db.collection('Classes');
+        collection.updateOne({theclass: classes}, {$push: {sections: section}}, (err,obj)=> {
+            if (err) throw err;
+            console.log('Adding Section');
+            callback();
+        })
+    }
+}
+
+////////////////////////////////////STUDENTS/////////////////////////////////////////////////////
+
+
+//Displaying Students Query
+module.exports.displayStudents= (callback) => {
+    MongoClient.connect(url, { useNewUrlParser: true }, (err,client)=>{
+        if(err){
+            console.log("Unable to connect to the server",err);
+        }
+        console.log("Connect to server successfully.");
+        console.log(dbName);
+
+        const db = client.db(dbName); 
+
+        findStudent(db);
+
+        client.close();
+        
+    }); 
+
+    var findStudent = (db) => {
+        const collection = db.collection('Students')
+        collection.find({}).toArray((err,items) => {
+            if (err) throw err;
+            callback(items);
+        });
+    }
+}
+
+/*Display Single Student*/
+module.exports.displaySingleStudent= (id, callback) => {
+    MongoClient.connect(url, { useNewUrlParser: true }, (err,client)=>{
+        if(err){
+            console.log("Unable to connect to the server",err);
+        }
+        console.log("Connect to server successfully.");
+
+        const db = client.db(dbName); 
+
+        findSingleStudent(db,id);
+        client.close();
+        
+    }); 
+
+    var findSingleStudent = (db,id) => {
+        const collection = db.collection('Students');
+        collection.findOne({_id:id}, (err, items) => {
+            if (err) throw err;
+            callback(items);
+        });
+    }
+}
 
 //Add Students Query
 module.exports.addStudent = function (account,callback){
@@ -105,12 +204,27 @@ module.exports.addStudent = function (account,callback){
     const insertDocu = function(db, account) {
         // Get the documents collection
         const collection = db.collection('Students');
+
+        getNextSequenceValueStu(db, "studentid", (theid)=> {
+            account["_id"]= theid;
         
-        collection.insertOne(account, function(err, result) {
-            if(err) throw err;
-            console.log("Inserted Student Successfully");
-            callback(result);
-        });
+            collection.insertOne(account, function(err, result) {
+                if(err) throw err;
+                console.log("Inserted Student Successfully");
+                callback(result);
+            });
+        });    
+    }
+
+    const getNextSequenceValueStu= (db,sequenceName,cb) => {
+
+        db.collection('StuCounter').findOneAndUpdate(
+           {_id: sequenceName },
+           {$inc:{sequence_value:1}},
+           (err,result)=> {
+               console.log(result.value.sequence_value);
+               cb(result.value.sequence_value);
+           });
     }
 }
 
@@ -143,72 +257,7 @@ module.exports.modifyStudent = function (account,callback){
     }
 }
 
-
-//Add Faculty Query
-module.exports.addFaculty = function (account,callback){
-
-    MongoClient.connect(url, { useNewUrlParser: true }, (err,client)=>{
-        if(err){
-            console.log("Unable to connect to the server",err);
-        }
-        console.log("Connect to server successfully.");
-
-        const db = client.db(dbName); 
-
-        insertDocuments(db,account,()=> {
-            client.close();
-        });       
-
-
-    });     
-    const insertDocuments = function(db, account) {
-        // Get the documents collection
-        const collection = db.collection('Faculty');
-        
-        const saltRounds = 10;
-        //hash the password through bcyrpt 
-        bcrypt.hash(account.password,saltRounds).then(function (hash) {
-            
-            account.password = hash;
-
-            collection.insertOne(account, function(err, result) {
-                if(err) throw err;
-                console.log("Inserted Faculty Successfully");
-                callback(result);
-            });
-        });
-    }
-}
-
-//Modify Faculty
-module.exports.modifyFaculty = function (account,callback){
-
-    MongoClient.connect(url, { useNewUrlParser: true }, (err,client)=>{
-        if(err){
-            console.log("Unable to connect to the server",err);
-            message='Error connecting server'
-        }
-        console.log("Connect to server successfully.");
-
-        const db = client.db(dbName); 
-
-        modifyDocu(db,account, function() {
-            client.close();
-        });
-    });     
-    const modifyDocu = function(db, account) {
-        // Get the documents collection
-        const collection = db.collection('Faculty');
-        
-        var newValues = {$set: {name: account.name, class: account.class, section: account.section, email: account.email, subject: account.subject, contact: account.contact, gender:account.gender}};
-        collection.UpdateOne({name: account.name}, newValues, function(err, result) {
-            if(err) throw err;
-            console.log("Updating Faculty");
-            callback();
-        });
-    }
-}
-
+//Delete Student
 module.exports.deleteStudent = (name, callback) => {
     MongoClient.connect(url, { useNewUrlParser: true }, (err,client)=>{
         if(err){
@@ -234,8 +283,86 @@ module.exports.deleteStudent = (name, callback) => {
     }
 }
 
+//Add Grade
+module.exports.addGrade = (theid, account, callback) => {
+    MongoClient.connect(url, { useNewUrlParser: true }, (err,client)=>{
+        if(err){
+            console.log("Unable to connect to the server",err);
+            message='Error connecting server'
+        }
 
-module.exports.deleteFaculty = (email, cb) => {
+        
+        console.log("Connect to server successfully.");
+
+        const db = client.db(dbName); 
+
+        addGrd(db,theid, account);
+
+        client.close();
+    });
+
+    const addGrd = (db,theid, account) => {
+        const collection = db.collection('Students');
+        var thegrades = {$set: {q1: account.q1, q2:account.q2, q3:account.q3, midterm:account.midterm, final:account.final}}
+        collection.updateOne({_id:theid}, thegrades, (err, result) => {
+            if (err) throw err;
+            console.log('Added Grades');
+            callback();
+        })
+        
+    }
+}
+
+//Add Attendence
+module.exports.addAttendence = (theid, pora, callback) => {
+    MongoClient.connect(url, { useNewUrlParser: true }, (err,client)=>{
+        if(err){
+            console.log("Unable to connect to the server",err);
+            message='Error connecting server'
+        }
+        console.log("Connect to server successfully.");
+        var hogya = true;
+
+        const db = client.db(dbName); 
+
+        attend(db,theid,pora, hogya);
+
+        client.close();
+    });
+
+    const attend = (db,theid, pora, hogya) => {
+        const collection = db.collection('Students');
+        themarking = '';
+        if(pora === true) {
+            themarking = {$set: {attendence: pora}, $inc: {presenceNumber: 0.5}};
+            collection.findOne({_id:theid}, (err, items)=> {
+                if (err) throw err;
+                else if(items.attendence === pora) {
+                    hogya=false;   
+                }
+            })
+        }
+        
+        else {
+            themarking = {$set: {attendence: pora}};
+        }
+        
+        if(hogya) {
+            collection.updateOne({_id:theid}, themarking, (err, result) => {
+                if (err) throw err;
+                console.log('Added Attendence');
+                callback(result);
+            });
+        }   
+    }
+}
+
+///////////////////////////////FACULTY//////////////////////////////////////////////
+
+
+//Add Faculty Query
+module.exports.addFaculty = function (account,callback){
+
     MongoClient.connect(url, { useNewUrlParser: true }, (err,client)=>{
         if(err){
             console.log("Unable to connect to the server",err);
@@ -244,15 +371,95 @@ module.exports.deleteFaculty = (email, cb) => {
 
         const db = client.db(dbName); 
 
-        deleteDocument(db, email);
+        insertDocuments(db,account,()=> {
+            client.close();
+        });       
+
+
+    });     
+    const insertDocuments = function(db, account) {
+        // Get the documents collection
+        const collection = db.collection('Faculty');
+        
+        const saltRounds = 10;
+        //hash the password through bcyrpt 
+
+        getNextSequenceValueFac(db, "facultyid", (theid)=> {
+            account["_id"]= theid;
+            bcrypt.hash(account.password,saltRounds).then(function (hash) {
+                
+                account.password = hash;
+    
+                collection.insertOne(account, function(err, result) {
+                    if(err) throw err;
+                    console.log("Inserted Faculty Successfully");
+                    callback(result);
+                });
+            });
+        });
+
+    }
+
+    const getNextSequenceValueFac= (db,sequenceName,cb) => {
+
+        db.collection('FacCounter').findOneAndUpdate(
+           {_id: sequenceName },
+           {$inc:{sequence_value:1}},
+           (err,result)=> {
+               console.log(result.value.sequence_value);
+               cb(result.value.sequence_value);
+           });
+    }
+}
+
+//Modify Faculty
+module.exports.modifyFaculty = function (account,callback){
+
+    MongoClient.connect(url, { useNewUrlParser: true }, (err,client)=>{
+        if(err){
+            console.log("Unable to connect to the server",err);
+            message='Error connecting server'
+        }
+        console.log("Connect to server successfully.");
+
+        const db = client.db(dbName); 
+
+        modifyDocu(db,account, ()=>  {
+            client.close();
+        });
+    });     
+    const modifyDocu = function(db, account) {
+        // Get the documents collection
+        const collection = db.collection('Faculty');
+        
+        var newValues = {$set: {name: account.name, class: account.class, section: account.section, email: account.email, subject: account.subject, contact: account.contact, gender:account.gender}};
+        collection.updateOne({_id: account._id}, newValues, function(err, result) {
+            if(err) throw err;
+            console.log("Updating Faculty");
+            callback();
+        });
+    }
+}
+
+//Delete Faculty
+module.exports.deleteFaculty = (id, cb) => {
+    MongoClient.connect(url, { useNewUrlParser: true }, (err,client)=>{
+        if(err){
+            console.log("Unable to connect to the server",err);
+        }
+        console.log("Connect to server successfully.");
+
+        const db = client.db(dbName); 
+
+        deleteDocument(db, id);
         
         client.close();
 
     });
     
-    const deleteDocument = (db, email)=> {
+    const deleteDocument = (db, id)=> {
         const collection = db.collection('Faculty');
-        collection.deleteOne({email: email}, (err, obj)=> {
+        collection.deleteOne({_id: id}, (err, obj)=> {
             if (err) throw err;
             console.log('Faculty deleted successfully');
             cb(obj);
@@ -260,6 +467,7 @@ module.exports.deleteFaculty = (email, cb) => {
     }
 }
 
+//Show Students To Faculty
 module.exports.showStudentsToFaculty = (classy, section,callback) => {
     MongoClient.connect(url, { useNewUrlParser: true }, (err,client)=>{
         if(err){
@@ -285,32 +493,7 @@ module.exports.showStudentsToFaculty = (classy, section,callback) => {
     }
 }
 
-//Displaying Students Query
-module.exports.displayStudents= (callback) => {
-    MongoClient.connect(url, { useNewUrlParser: true }, (err,client)=>{
-        if(err){
-            console.log("Unable to connect to the server",err);
-        }
-        console.log("Connect to server successfully.");
-        console.log(dbName);
-
-        const db = client.db(dbName); 
-
-        findStudent(db);
-
-        client.close();
-        
-    }); 
-
-    var findStudent = (db) => {
-        const collection = db.collection('Students')
-        collection.find({}).toArray((err,items) => {
-            if (err) throw err;
-            callback(items);
-        });
-    }
-}
-
+//Display Single Faculty
 module.exports.displaySingleFaculty= (email, callback) => {
     MongoClient.connect(url, { useNewUrlParser: true }, (err,client)=>{
         if(err){
@@ -320,7 +503,7 @@ module.exports.displaySingleFaculty= (email, callback) => {
 
         const db = client.db(dbName); 
 
-        findSingleFaculty(db);
+        findSingleFaculty(db,email);
 
         client.close();
         
@@ -360,6 +543,8 @@ module.exports.displayFaculty= (callback) => {
         });
     }
 }
+
+////////////////////////VALIDATION//////////////////////////////////////////
 
 //Validating Admin Query
 module.exports.validAdmin = function(account ,callback){

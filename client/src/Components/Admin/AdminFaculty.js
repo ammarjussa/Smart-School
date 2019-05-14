@@ -13,71 +13,37 @@ import {
     Modal,
     Form
 } from 'react-bootstrap';
-import { FaEye,FaTrashAlt,FaPlus, FaSleigh, FaTruckMonster} from "react-icons/fa";
+import { FaEye,FaTrashAlt,FaPlus} from "react-icons/fa";
 import { Input, ModalHeader } from 'semantic-ui-react';
 import axios from "axios"
 
 class Faculty extends Component {
 
     state = {
-        facultyData:  [
-            {
-                facultyid: 1,
-                name: '--',
-                subject: '--',
-                email: '--',
-            },
-            {
-                facultyid: 1,
-                name: '--',
-                subject: '--',
-                email: '--',
-            },
-            {
-                facultyid: 1,
-                name: '--',
-                subject: '--',
-                email: '--',
-            },
-            {
-                facultyid: 1,
-                name: '--',
-                subject: '--',
-                email: '--',
-            },
-            {
-                facultyid: 1,
-                name: '--',
-                subject: '--',
-                email: '--',
-            },
-          
-         ],
+        facultyData:  [],
         facultyDataBackup: [],
         selectAll: false,
         facultyid: '',
         facultyname: '',
         view_isview:false,
         view_object: {},
-        edit:{
-            id: '',
-            isEdit: false
-        },
-        add_facultyid: null,
         add_showmodal:false,
-        add_password1: '',
-        add_password2: '',
-        add_class: '',
-        add_subject: '',
-        add_gender: '',
-        add_name: '',
-        add_contact: '',
-        add_email: '',
+        add_facultyid: null,
+        password1: '',
+        password2: '',
+        class: '',
+        subject: '',
+        gender: '',
+        name: '',
+        contact: '',
+        email: '',
+        section: '',
         delete_last_deleted: {},
         delete_last_deleted_id: null,
         delete_showmodal: false,
         adding: false,
-        Search: ''
+        Search: '',
+        showedit: false
     }
 
 
@@ -118,6 +84,7 @@ class Faculty extends Component {
         var prevState = Object.assign({},this.state)
         prevState.view_isview = false
         this.setState(prevState)
+        this.setState({showedit: false})
     } 
 
     handleViewModalShow = (ev) =>{
@@ -132,11 +99,10 @@ class Faculty extends Component {
         this.get_faculty(this.state.delete_last_deleted_id, (fObject) => {
 
             var prevState = Object.assign({},this.state)
-            prevState.delete_last_deleted = fObject 
+            prevState.delete_last_deleted = fObject
             this.setState(prevState, () => {
                 let del_Obj = {
-                    facultyid:fObject.facultyid,
-                    email: fObject.email
+                    id : fObject._id
                 }
         
             axios.post("/deleteFaculty",del_Obj).then((res) => {
@@ -145,8 +111,9 @@ class Faculty extends Component {
                 // this.setState(prevState)
                 var prevState = Object.assign({},this.state)
                 let fd = prevState.facultyData
-                fd = fd.filter((f) => f.email !== fObject.email)
+                fd = fd.filter((f) => f._id !== fObject._id)
                 prevState.facultyData = fd
+                prevState.facultyDataBackup = fd
                 this.setState(prevState)
                 this.handleDeleteModalClose()
             }).catch((e) => alert(e))
@@ -160,7 +127,7 @@ class Faculty extends Component {
     get_faculty(id,cb) {
         let count = 0
         this.state.facultyData.forEach(f => {
-            if(f.email===id && count<1)
+            if(f._id===id && count<1)
             {
                 count = count + 1
                 console.log(f)
@@ -202,19 +169,19 @@ class Faculty extends Component {
         e.preventDefault()
         let obj = this.state
         
-        if(obj.add_password1 === obj.add_password2)
+        if(obj.password1 === obj.password2)
         {
+            
             let facultyInfo = {
 
-                "facultyid": 1,
-                "name": obj.add_name,
-                "contact": obj.add_contact,
-                "gender": obj.add_gender,
-                "email": obj.add_email,
-                "section": obj.add_section,
-                "class": obj.add_class,
-                "password": obj.add_password1,
-                "subject": obj.add_subject,
+                "name": obj.name,
+                "contact": obj.contact,
+                "gender": obj.gender,
+                "email": obj.email,
+                "section": obj.section,
+                "class": obj.class,
+                "password": obj.password1,
+                "subject": obj.subject,
             }
 
             console.log(facultyInfo)
@@ -223,16 +190,29 @@ class Faculty extends Component {
                 this.setState({adding:false})
                 if(res.data.message === "Success")
                 {
+
+                    let facultyInfo = {
+
+                        "_id" : res.data.theid,
+                        "name": obj.name,
+                        "contact": obj.contact,
+                        "gender": obj.gender,
+                        "email": obj.email,
+                        "section": obj.section,
+                        "class": obj.class,
+                        "password": obj.password1,
+                        "subject": obj.subject,
+                    }
                     var prevState = Object.assign({},this.state)
                     prevState.add_showmodal = false
-                    prevState.add_password1= ''
-                    prevState.add_password2= ''
-                    prevState.add_class= ''
-                    prevState.add_subject= ''
-                    prevState.add_gender= ''
-                    prevState.add_name= ''
-                    prevState.add_contact= ''
-                    prevState.add_email= ''
+                    prevState.password1= ''
+                    prevState.password2= ''
+                    prevState.class= ''
+                    prevState.subject= ''
+                    prevState.gender= ''
+                    prevState.name= ''
+                    prevState.contact= ''
+                    prevState.email= ''
                     let fd = prevState.facultyData
                     fd.push(facultyInfo)
                     prevState.facultyData = fd
@@ -250,7 +230,50 @@ class Faculty extends Component {
     }
 
     handleEdit = () => {
+        this.setState({showedit: true})
+    }
 
+    handleEditUpdate = () => {
+        this.setState({updating: true})
+        let obj = this.state.view_object
+            
+            let facultyInfo = {
+
+                "id": obj._id,
+                "name": obj.name,
+                "contact": obj.contact,
+                "gender": obj.gender,
+                "email": obj.email,
+                "section": obj.section,
+                "class": obj.class,
+                "subject": obj.subject,
+            }
+
+            console.log(facultyInfo)
+            axios.post("/updatefaculty",facultyInfo).then((res)=>{
+                console.log(res.data.message)
+                if(res.data.message === "Success")
+                {
+                    this.setState({updating:false})
+                    // var prevState = Object.assign({},this.state)
+                    // prevState.add_showmodal = false
+                    // prevState.view_object.class= ''
+                    // prevState.view_object.subject= ''
+                    // prevState.view_object.gender= ''
+                    // prevState.view_object.name= ''
+                    // prevState.view_object.contact= ''
+                    // prevState.view_object.email= ''
+                    // let fd = prevState.facultyData
+                    // prevState.facultyData = fd
+                    // this.setState(prevState)
+                    this.setState({showedit: false})
+                }
+                else{
+                    alert("Something went Wrong!")
+                }
+
+
+            }).catch((e) => console.log(e))
     }
 
     handleAddInputs = (ev) => {
@@ -259,6 +282,15 @@ class Faculty extends Component {
         console.log(name,value)
         var prevState = Object.assign({},this.state)
         prevState[name] = value
+        this.setState(prevState)
+    }
+
+    handleEditInputs = (ev) => {
+        ev.preventDefault()
+        let {name,value} = ev.target
+        console.log(name,value)
+        var prevState = Object.assign({},this.state)
+        prevState.view_object[name] = value
         this.setState(prevState)
     }
 
@@ -316,9 +348,121 @@ class Faculty extends Component {
                     centered
                 >
                     <Modal.Header closeButton>
-                        <Modal.Title>Faculty Information</Modal.Title>
+                        {this.state.showedit?
+                        <Modal.Title>Edit Faculty Information</Modal.Title>
+                        :
+                        <Modal.Title>Faculty Information</Modal.Title>}
                     </Modal.Header>
                     <Modal.Body>
+                    {this.state.showedit?
+                        <Form onSubmit={this.handleSubmitAddFaculty}>
+                        <div>
+                        <Form.Row>
+                            <Form.Group as={Col}>
+                            <Form.Label>Name:</Form.Label>
+                                <Form.Control
+                                    required
+                                    type="text"
+                                    placeholder="Enter Name"
+                                    name="name"
+                                    value={this.state.view_object.name}
+                                    onChange={this.handleEditInputs}
+                                    />
+                                </Form.Group>
+                               
+                            </Form.Row>
+
+                            <Form.Row>
+                            <Form.Group as={Col}>
+                            <Form.Label>Gender</Form.Label>
+                                <Form.Control
+                                 required
+                                 name="gender"
+                                 value={this.state.view_object.gender}
+                                 onChange={this.handleEditInputs}
+                                 as="select"
+                                 >
+                                    <option>Gender...</option>
+                                    <option>Male</option>
+                                    <option>Female</option>
+                                </Form.Control>
+                                </Form.Group>
+
+                                <Form.Group as={Col}>
+                                <Form.Label>Contact</Form.Label>
+                                    <Form.Control
+                                    name="contact"
+                                    value={this.state.view_object.contact}
+                                    onChange={this.handleEditInputs}
+                                    required
+                                    type="tel"
+                                    placeholder="Enter Contact"
+                                    pattern="^\+92(\s+)?\(?(17|25|29|33|44)\)?(\s+)?[0-9]{3}-?[0-9]{2}-?[0-9]{2}$" 
+                                    />
+                                </Form.Group>
+                            </Form.Row>
+
+                            <Form.Row>
+                            <Form.Group as={Col}>
+                            <Form.Label>Subject</Form.Label>
+                                <Form.Control 
+                                 name="subject"
+                                 value={this.state.view_object.subject}
+                                 onChange={this.handleEditInputs}
+                                as="select">
+                                    <option>Subject...</option>
+                                    <option>English</option>
+                                    <option>Urdu</option>
+                                    <option>Science</option>
+                                    <option>Math</option>
+                                </Form.Control>
+                                </Form.Group>
+
+                                <Form.Group as={Col}>
+                                <Form.Label>Class</Form.Label>
+                                <Form.Control
+                                 name="class"
+                                 value={this.state.view_object.class}
+                                 onChange={this.handleEditInputs}
+                                 as="select">
+                                    <option>Class...</option>
+                                    <option>6</option>
+                                    <option>7</option>
+                                    <option>8</option>
+                                </Form.Control>
+                                </Form.Group>
+
+                                <Form.Group as={Col}>
+                                <Form.Label>Section</Form.Label>
+                                <Form.Control 
+                                 name="section"
+                                 value={this.state.view_object.section}
+                                 onChange={this.handleEditInputs}
+                                as="select">
+                                    <option>Section...</option>
+                                    <option>A</option>
+                                    <option>B</option>
+                                    <option>C</option>
+                                </Form.Control>
+                                </Form.Group>
+                            </Form.Row>
+
+                            <Form.Row>
+                                <Form.Group as={Col}>
+                                <Form.Label>Email</Form.Label>
+                                    <Form.Control
+                                    name="email"
+                                    value={this.state.view_object.email}
+                                    onChange={this.handleEditInputs}
+                                    required
+                                    type="email"
+                                    placeholder="Enter Email"
+                                    />
+                                </Form.Group>
+                            </Form.Row>
+                            </div>
+                    </Form>
+                    :
                         <Container>
                             <Row>
                                 <Col>
@@ -363,6 +507,14 @@ class Faculty extends Component {
                                 </Col>
                             </Row>
                             <Row>
+                                <Col>
+                                    <b>Section:</b>
+                                </Col>
+                                <Col>
+                                    {this.state.view_object.section}
+                                </Col>
+                            </Row>
+                            <Row>
                             <Col>
                                     <b>Subject:</b>
                                 </Col>
@@ -370,11 +522,23 @@ class Faculty extends Component {
                                     {this.state.view_object.subject}
                                 </Col>
                             </Row>
-                        </Container>
+                        </Container>}
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button variant="secondary" onClick={this.handleViewModalClose}>Close</Button>
-                        <Button variant="danger" onClick={this.handleView}>Edit</Button>
+                        {this.state.showedit?
+                        <div>
+                            {
+                            this.state.updating?
+                                <Button variant="warning" disabled >Updating...</Button>
+                                :
+                                <Button variant="warning" onClick={this.handleEditUpdate}>Update</Button>
+                            }
+                        </div>
+                        :
+                        <div>
+                        {/* <Button variant="secondary" onClick={this.handleViewModalClose}>Close</Button> */}
+                        <Button variant="danger" onClick={this.handleEdit}>Edit</Button>
+                        </div>}
                     </Modal.Footer>
                 </Modal>
 
@@ -394,12 +558,13 @@ class Faculty extends Component {
                                     <div>
                                     <Form.Row>
                                         <Form.Group as={Col}>
+                                        <Form.Label>Name:</Form.Label>
                                             <Form.Control
                                                 required
                                                 type="text"
-                                                placeholder="Enter Name"
-                                                name="add_name"
-                                                value={this.state.add_name}
+                                                // placeholder="Enter Name"
+                                                name="name"
+                                                value={this.state.name}
                                                 onChange={this.handleAddInputs}
                                                 />
                                             </Form.Group>
@@ -408,10 +573,11 @@ class Faculty extends Component {
 
                                         <Form.Row>
                                         <Form.Group as={Col}>
+                                        <Form.Label>Gender:</Form.Label>
                                             <Form.Control
                                              required
-                                             name="add_gender"
-                                             value={this.state.add_gender}
+                                             name="gender"
+                                             value={this.state.gender}
                                              onChange={this.handleAddInputs}
                                              as="select"
                                              >
@@ -422,22 +588,28 @@ class Faculty extends Component {
                                             </Form.Group>
 
                                             <Form.Group as={Col}>
+                                            <Form.Label>Contact:</Form.Label>
                                                 <Form.Control
-                                                 name="add_contact"
-                                                 value={this.state.add_contact}
-                                                 onChange={this.handleAddInputs}
+                                                name="contact"
+                                                value={this.state.contact}
+                                                onChange={this.handleAddInputs}
                                                 required
-                                                type="text"
+                                                type="tel"
                                                 placeholder="Enter Contact"
+                                                pattern="^((\+92)|(0092))-{0,1}\d{3}-{0,1}\d{7}$|^\d{11}$|^\d{4}-\d{7}$" 
                                                 />
+                                            <Form.Text className="text-muted">
+                                            Format: +92xxxxxxxxxx
+                                            </Form.Text>
                                             </Form.Group>
                                         </Form.Row>
 
                                         <Form.Row>
                                         <Form.Group as={Col}>
+                                        <Form.Label>Subject:</Form.Label>
                                             <Form.Control 
-                                             name="add_subject"
-                                             value={this.state.add_subject}
+                                             name="subject"
+                                             value={this.state.subject}
                                              onChange={this.handleAddInputs}
                                             as="select">
                                                 <option>Subject...</option>
@@ -449,9 +621,10 @@ class Faculty extends Component {
                                             </Form.Group>
 
                                             <Form.Group as={Col}>
+                                            <Form.Label>Class:</Form.Label>
                                             <Form.Control
-                                             name="add_class"
-                                             value={this.state.add_class}
+                                             name="class"
+                                             value={this.state.class}
                                              onChange={this.handleAddInputs}
                                              as="select">
                                                 <option>Class...</option>
@@ -462,9 +635,10 @@ class Faculty extends Component {
                                             </Form.Group>
 
                                             <Form.Group as={Col}>
+                                            <Form.Label>Section:</Form.Label>
                                             <Form.Control 
-                                             name="add_section"
-                                             value={this.state.add_section}
+                                             name="section"
+                                             value={this.state.section}
                                              onChange={this.handleAddInputs}
                                             as="select">
                                                 <option>Section...</option>
@@ -477,35 +651,38 @@ class Faculty extends Component {
 
                                         <Form.Row>
                                             <Form.Group as={Col}>
+                                            <Form.Label>Email:</Form.Label>
                                                 <Form.Control
-                                                name="add_email"
-                                                value={this.state.add_email}
+                                                name="email"
+                                                value={this.state.email}
                                                 onChange={this.handleAddInputs}
                                                 required
                                                 type="email"
-                                                placeholder="Enter Email"
+                                                // placeholder="Enter Email"
                                                 />
                                             </Form.Group>
                                         </Form.Row>
 
                                         <Form.Row>
                                                 <Form.Group as={Col}>
+                                                <Form.Label>Password:</Form.Label>
                                                     <Form.Control
                                                     required
                                                     type="password"
-                                                    placeholder="Enter Password"
-                                                    name="add_password1"
-                                                    value={this.state.add_password1}
+                                                    // placeholder="Enter Password"
+                                                    name="password1"
+                                                    value={this.state.password1}
                                                     onChange={this.handleAddInputs}
                                                     />
                                                 </Form.Group>
                                                 <Form.Group as={Col}>
+                                                <Form.Label>Re-type Password:</Form.Label>
                                                     <Form.Control
                                                     required
                                                     type="password"
-                                                    placeholder="Confirm Password"
-                                                    name="add_password2"
-                                                    value={this.state.add_password2}
+                                                    // placeholder="Confirm Password"
+                                                    name="password2"
+                                                    value={this.state.password2}
                                                     onChange={this.handleAddInputs}
                                                     />
                                                 </Form.Group>
@@ -555,17 +732,17 @@ class Faculty extends Component {
                     <tbody>
 
                         {
-                            this.state.facultyData.map(({ facultyid, name,subject,email,contact},id) => 
+                            this.state.facultyData.map(({ _id, name,subject,email,contact},id) => 
                                 <tr key={id}>
                                     <td><InputGroup.Prepend><InputGroup.Checkbox checked={this.state.facultyData.check} onChange={this.handleChangeCheckbox}/> </InputGroup.Prepend> </td>
-                                    <td>{id}</td>
+                                    <td>{_id}</td>
                                     <td>{name}</td>
                                     <td>{email}</td>
                                     <td>
                                         {/* <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">View/Edit</Tooltip>}>
                                             <span className="d-inline-block"> */}
-                                                <Button variant="success" onClick={(e) => this.handleView(e,email)}> <FaEye/> View/Edit</Button>
-                                                <Button variant="danger" onClick={(e) => this.handleDeleteTid(e,email)}> <FaTrashAlt/> Delete</Button>
+                                                <Button variant="success" onClick={(e) => this.handleView(e,_id)}> <FaEye/> View/Edit</Button>
+                                                <Button variant="danger" onClick={(e) => this.handleDeleteTid(e,_id)}> <FaTrashAlt/> Delete</Button>
                                             {/* </span>
                                             </OverlayTrigger> */}
                                     </td>
@@ -577,6 +754,8 @@ class Faculty extends Component {
 
                     </tbody>
                 </Table>
+
+                {this.state.facultyData.length===0 ? <p>No records available</p> : <p></p>}
             </div>
         );
     }

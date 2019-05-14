@@ -21,38 +21,7 @@ import axios from "axios"
 class StudentsTab extends Component {
   
   state = {
-    studentData: [
-      {
-          studentid: 1,
-          name: '--',
-          theclass: '-',
-          section: '-',
-      },
-      {
-          studentid: 1,
-          name: '--',
-          theclass: '-',
-          section: '-',
-      },
-      {
-          studentid: 1,
-          name: '--',
-          theclass: '-',
-          section: '-',
-      },
-      {
-          studentid: 1,
-          name: '--',
-          theclass: '-',
-          section: '-',
-      },
-      {
-          studentid: 1,
-          name: '--',
-          theclass: '-',
-          section: '-',
-      },
-   ],
+    studentData: [],
     studentDataBackup: [],
     selectAll: false,
     view_isview: false,
@@ -151,6 +120,7 @@ handleDelete = (e) => {
           let fd = prevState.studentData
           fd = fd.filter((f) => f.name !== fObject.name)
           prevState.studentData = fd
+          prevState.studentDataBackup = fd
           this.setState(prevState)
           this.handleDeleteModalClose()
       }).catch((e) => alert(e))

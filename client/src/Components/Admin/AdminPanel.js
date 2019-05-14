@@ -27,6 +27,12 @@ class AdminPanel extends Component {
     })
   }
 
+  componentWillUnmount(){
+    auth.login(()=> {
+      this.props.history.push("/")
+    })
+  }
+
   render() {
     return (
       <div>

@@ -3,9 +3,15 @@ const http = require('http');
 const path = require('path');
 var cors = require('cors');
 var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
+var session = require('express-session');
 
 var app = express();
 app.use(cors());
+app.use(cookieParser());
+
+app.use(session({secret: "Your secret key", saveUninitialized: true,resave: true}));
+
 
 app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json

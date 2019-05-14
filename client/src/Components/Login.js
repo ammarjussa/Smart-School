@@ -5,6 +5,7 @@ import axios from "axios"
 import {Form,Button,Card,Col,Row,Modal,Spinner} from 'react-bootstrap'
 import '../App.css'
 import LoginNavbar from './LoginNavbar';
+import Profile from '../Profile'
 
 
 class Login extends Component {
@@ -19,7 +20,6 @@ class Login extends Component {
     adminProfile: null,
   }
 
-
   handleChange = (event) => {
     const {name, value} = event.target
     this.setState({[name]: value});
@@ -33,7 +33,7 @@ class Login extends Component {
           this.setState({
           email: '',
           password: '',
-          User: ''
+          User: "Admin",
         })
     }
     else{
@@ -67,6 +67,7 @@ class Login extends Component {
     console.log("handlesubmit",isLogin)
     if(isLogin===true)
     {
+      Profile.updateEmail(this.state.email)
       if(this.state.User==="Admin")
       {
         this.setState({adminProfile: profile})
@@ -93,11 +94,6 @@ class Login extends Component {
       // }
       // else{
           alert("Invalid Credentials")
-          this.setState({
-          email: '',
-          password: '',
-          User: ''
-        })
       // }
       
     }

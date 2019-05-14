@@ -21,34 +21,7 @@ import axios from "axios"
 class ClassesTab extends Component {
 
     state = {
-      classesData: [
-        {
-           theclass: '--',
-           section: '--',
-           classcap:'--',
-        },
-        {
-           theclass: '--',
-           section: '--',
-           classcap:'--',
-        },
-        {
-           theclass: '--',
-           section: '--',
-           classcap:'--',
-        },
-        {
-           theclass: '--',
-           section: '--',
-           classcap:'--',
-        },
-        {
-           theclass: '--',
-           section: '--',
-           classcap:'--',
-        },
-        
-    ],
+      classesData: [],
       classesDataBackup: [],
       selectAll: false,
       view_object: {},
@@ -87,7 +60,7 @@ class ClassesTab extends Component {
                 classesData: res.data.classes,
                 classesDataBackup : res.data.classes,
             })
-      }).catch((e) => alert(e))
+      }).catch((e) => console.log("MyError:",e))
   }
 
 
@@ -112,6 +85,7 @@ class ClassesTab extends Component {
     var prevState = Object.assign({},this.state)
     prevState.view_isview = false
     this.setState(prevState)
+    this.setState({showedit: false})
   } 
 
   handleViewModalShow = (ev) =>{
@@ -125,31 +99,32 @@ class ClassesTab extends Component {
     e.preventDefault()
     this.handleDeleteModalClose()
     // setTimeout(()=> this.handleDeleteModalClose(),3000)
-    // this.get_student(this.state.delete_last_deleted_id, (fObject) => {
+    this.get_student(this.state.delete_last_deleted_id, (fObject) => {
 
-    //     var prevState = Object.assign({},this.state)
-    //     prevState.delete_last_deleted = fObject 
-    //     this.setState(prevState, () => {
-    //         let del_Obj = {
-    //             name:fObject.name
-    //         }
+        var prevState = Object.assign({},this.state)
+        prevState.delete_last_deleted = fObject 
+        this.setState(prevState, () => {
+            let del_Obj = {
+                name:fObject.name
+            }
 
-    //     axios.post("/deleteStudent",del_Obj).then((res) => {
-    //         // var prevState = Object.assign({},this.state)
-    //         // prevState.facultyData = this.state.facultyData.filter((f) => f.studentid !== del_Obj.studentid && f.email !== del_Obj.email)
-    //         // this.setState(prevState)
-    //         var prevState = Object.assign({},this.state)
-    //         let fd = prevState.classesData
-    //         fd = fd.filter((f) => f.name !== fObject.name)
-    //         prevState.classesData = fd
-    //         this.setState(prevState)
-    //         this.handleDeleteModalClose()
-    //     }).catch((e) => alert(e))
+        axios.post("/deleteclass",del_Obj).then((res) => {
+            // var prevState = Object.assign({},this.state)
+            // prevState.facultyData = this.state.facultyData.filter((f) => f.studentid !== del_Obj.studentid && f.email !== del_Obj.email)
+            // this.setState(prevState)
+            var prevState = Object.assign({},this.state)
+            let fd = prevState.classesData
+            fd = fd.filter((f) => f.name !== fObject.name)
+            prevState.classesData = fd
+            prevState.classesDataBackup = fd
+            this.setState(prevState)
+            this.handleDeleteModalClose()
+        }).catch((e) => alert(e))
 
-    //     })
+        })
 
 
-    //})
+    })
 
     
   }
@@ -157,7 +132,7 @@ class ClassesTab extends Component {
   get_student(id,cb) {
     let count = 0
     this.state.classesData.forEach(f => {
-        if(f.theclass===id && count<1)
+        if(f._id===id && count<1)
         {
             count = count + 1
             console.log(f)
@@ -285,7 +260,7 @@ class ClassesTab extends Component {
                       </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={this.handleDeleteModalClose}>No</Button>
-                        <Button variant="danger" disabled onClick={this.handleDelete}>Yes</Button>
+                        <Button variant="danger" onClick={this.handleDelete}>Yes</Button>
                     </Modal.Footer>
                 </Modal>
 
@@ -352,6 +327,7 @@ class ClassesTab extends Component {
                                         <Form.Row>
 
                                             <Form.Group as={Col}>
+                                            <Form.Label>Class:</Form.Label>
                                             <Form.Control 
                                              name="add_class"
                                              value={this.state.add_class}
@@ -373,6 +349,7 @@ class ClassesTab extends Component {
                                         <Form.Row>
 
                                             <Form.Group as={Col}>
+                                            <Form.Label>Section:</Form.Label>
                                             <Form.Control 
                                              name="add_section"
                                              value={this.state.add_section}
@@ -397,9 +374,12 @@ class ClassesTab extends Component {
 
                                         <Form.Row>
                                         <Form.Group as={Col}>
+                                        <Form.Label>Cap:</Form.Label>
                                             <Form.Control
                                                 required
                                                 type="number"
+                                                min = "20"
+                                                max = "50"
                                                 placeholder="Enter Class Cap"
                                                 name="add_classcap"
                                                 value={this.state.add_classcap}
@@ -409,7 +389,7 @@ class ClassesTab extends Component {
                                            
                                         </Form.Row>
 
-                                        <Button disabled  type="submit" ><FaPlus/> Add </Button>
+                                        <Button  type="submit" ><FaPlus/> Add </Button>
                                         </div>
                                 </Form>
                             </Card.Body>
@@ -436,7 +416,7 @@ class ClassesTab extends Component {
                 <Container>
                   <Row>
                     <Col xs={7} sm={9}>
-                    <Input disabled type="text" value={this.state.Search} onChange={this.handleSearch} placeholder="Search Class"></Input>
+                    <Input type="text" value={this.state.Search} onChange={this.handleSearch} placeholder="Search Class"></Input>
                     </Col>
                     <Col>
                     <Button onClick={this.handleAddModalShow}> <FaPlus/> Add Class</Button>
@@ -466,17 +446,17 @@ class ClassesTab extends Component {
                     <tbody>
 
                         {
-                            this.state.classesData.map(({section,theclass,cap},id) => 
+                            this.state.classesData.map(({section,theclass,cap,_id},id) => 
                                 <tr key={id}>
                                     <td><InputGroup.Prepend><InputGroup.Checkbox /> </InputGroup.Prepend> </td>
-                                    <td>{id}</td>
+                                    <td>{_id}</td>
                                     <td>{theclass}</td>
                                     <td>{section}</td>
                                     <td>{cap}</td>
                                     <td>
                                         {/* <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">View/Edit</Tooltip>}>
                                             <span className="d-inline-block"> */}
-                                                <Button variant="success" onClick={(e) => this.handleView(e,theclass)}> <FaEye/> View/Edit</Button>
+                                                <Button variant="success" onClick={(e) => this.handleView(e,_id)}> <FaEye/> View/Edit</Button>
                                                 {/* <Button variant="danger" onClick={(e) => this.handleDeleteTid(e,theclass)}> <FaTrashAlt/> Delete</Button> */}
                                                 <Button variant="danger" onClick={(e) => this.handleDeleteModalShow()}> <FaTrashAlt/> Delete</Button>
                                             {/* </span>

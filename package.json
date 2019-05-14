@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "engines": {
     "node": "10.15.3",
-    "npm": "6.4.1"
+    "npm": "6.9.0"
   },
-  "description": "Simple Login System",
+  "description": "Smart School Management System",
   "main": "index.js",
   "scripts": {
     "client-install": "npm install --prefix client",
@@ -20,9 +20,15 @@
   "dependencies": {
     "bcrypt": "^3.0.6",
     "concurrently": "^4.1.0",
+    "cookie-parser": "^1.4.4",
     "cors": "^2.8.5",
+    "email-templates": "^5.0.5",
     "express": "^4.16.3",
+    "express-session": "^1.16.1",
     "mongodb": "^3.1.0-beta4",
-    "nodemon": "^1.17.5"
+    "mongodb-autoincrement": "^1.0.1",
+    "nodemailer": "^6.1.1",
+    "nodemon": "^1.17.5",
+    "pug": "^2.0.3"
   }
 }
