@@ -278,9 +278,9 @@ module.exports = function(app){
 
     /*Delete Students */
     app.post('/deleteStudent', (req,res)=> {
-        let name = req.body.name;
-        console.log(`${name}`)
-        db.deleteStudent(name, (obj)=> {
+        let id = req.body.id;
+        console.log(`${id}`)
+        db.deleteStudent(id, (obj)=> {
             console.log(`Deleted Student!`);
             return res.send({message: 'Success'});
         })
@@ -348,6 +348,7 @@ module.exports = function(app){
     
         db.checkFaculty(account.name, account.email, (obj)=> {
             if(obj) {
+                console.log('Duplicate detected!')
                 return res.send({message: 'Unsuccessful'});
             }
 

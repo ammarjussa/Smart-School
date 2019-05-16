@@ -316,7 +316,7 @@ module.exports.checkStudent= (name, email, callback) => {
 }
 
 //Delete Student
-module.exports.deleteStudent = (name, callback) => {
+module.exports.deleteStudent = (id, callback) => {
     MongoClient.connect(url, { useNewUrlParser: true }, (err,client)=>{
         if(err){
             console.log("Unable to connect to the server",err);
@@ -325,15 +325,15 @@ module.exports.deleteStudent = (name, callback) => {
 
         const db = client.db(dbName); 
 
-        deleteDocument(db, name, ()=> {
+        deleteDocument(db, id, ()=> {
             client.close();
         });
 
     });
     
-    const deleteDocument = (db,name)=> {
+    const deleteDocument = (db,id)=> {
         const collection = db.collection('Students');
-        collection.deleteOne({name: name}, (err, obj)=> {
+        collection.deleteOne({_id: id}, (err, obj)=> {
             if (err) throw err;
             console.log('Student deleted Successfully');
             callback(obj);
