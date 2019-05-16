@@ -186,20 +186,19 @@ class ClassesTab extends Component {
             this.setState({adding:false})
             if(res.data.message === "Success")
             {
+                let classInfo = {
+                    _id: res.data.theid,
+                    section: obj.section,
+                    theclass: obj.theclass,
+                    cap: obj.cap,
+                } 
+
                 var prevState = Object.assign({},this.state)
                 prevState.add_showmodal = false
                 prevState.theclass= ''
                 prevState.cap= ''
                 prevState.subject= ''
                 let fd = prevState.classesData
-
-                let classInfo = {
-                    _id: res.data.theid,
-                    section: obj.section,
-                    theclass: obj.theclass,
-                    cap: obj.cap,
-                }  
-
                 fd.push(classInfo)
                 prevState.classesData = fd
                 this.setState(prevState)

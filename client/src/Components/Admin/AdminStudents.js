@@ -131,7 +131,7 @@ handleDelete = (e) => {
 get_student(id,cb) {
   let count = 0
   this.state.studentData.forEach(f => {
-      if(f.name===id && count<1)
+      if(f._id===id && count<1)
       {
           count = count + 1
           console.log(f)
@@ -214,8 +214,20 @@ handleSubmitAddStudent = (e) => {
               prevState.studentData = fd
               this.setState(prevState)
           }
+          else if(res.data.message==="Unsuccessful") {
+              alert("Duplicate Student Detected!")
+              var prevState = Object.assign({},this.state)
+              prevState.theclass= ''
+              prevState.section= ''
+              prevState.gender= ''
+              prevState.name= ''
+              prevState.pcontact= ''
+              prevState.pemail= ''
+              prevState.pname= ''
+              this.setState(prevState)
+          }
           else{
-              alert("Something went Wrong!")
+              alert("Something Went Wrong!")
           }
 
 
@@ -230,20 +242,21 @@ handleEditUpdate = () => {
     this.setState({updating: true})
     let obj = this.state.view_object
         
-        let facultyInfo = {
+        let studentInfo = {
 
             "id": obj._id,
             "name": obj.name,
-            "contact": obj.contact,
+            "pcontact": obj.pcontact,
             "gender": obj.gender,
-            "email": obj.email,
+            "pemail": obj.pemail,
+            "pname" : obj.pname,
             "section": obj.section,
-            "class": obj.class,
+            "theclass": obj.theclass,
             "subject": obj.subject,
         }
 
-        console.log(facultyInfo)
-        axios.post("/updatestudent",facultyInfo).then((res)=>{
+        console.log(studentInfo)
+        axios.post("/updatestudent",studentInfo).then((res)=>{
             console.log(res.data.message)
             if(res.data.message === "Success")
             {
@@ -276,6 +289,20 @@ handleAddInputs = (ev) => {
   var prevState = Object.assign({},this.state)
   prevState[name] = value
   this.setState(prevState)
+}
+
+handleEditInputs = (ev) => {
+    ev.preventDefault()
+    let {name,value} = ev.target
+    console.log(name,value)
+    var prevState = Object.assign({},this.state)
+    prevState.view_object[name] = value
+    this.setState(prevState)
+}
+
+adding = (e) =>{
+    e.preventDefault()
+    this.setState({adding: true})
 }
 
 handleSearch = (e) => {
@@ -330,9 +357,131 @@ handleSearch = (e) => {
                     centered
                 >
                     <Modal.Header closeButton>
-                        <Modal.Title>Student Information</Modal.Title>
+                    {this.state.showedit?
+                        <Modal.Title>Edit Student Information</Modal.Title>
+                        :
+                        <Modal.Title>Student Information</Modal.Title>}
                     </Modal.Header>
                     <Modal.Body>
+                      {this.state.showedit?
+                        <Form onSubmit={this.handleSubmitAddStudent}>
+
+                        <div>
+                          <Form.Row>
+                                        <Form.Group as={Col}>
+                                        <Form.Label>Name:</Form.Label>
+                                            <Form.Control
+                                                required
+                                                type="text"
+                                                // placeholder="Enter Student Name"
+                                                name="name"
+                                                value={this.state.view_object.name}
+                                                onChange={this.handleEditInputs}
+                                                />
+                                            </Form.Group>
+                                           
+                                        </Form.Row>
+
+                                        <Form.Row>
+                                        <Form.Group as={Col}>
+                                        <Form.Label>Gender:</Form.Label>
+                                            <Form.Control
+                                             required
+                                             name="gender"
+                                             value={this.state.view_object.gender}
+                                             onChange={this.handleEditInputs}
+                                             as="select"
+                                             >
+                                                <option>Gender...</option>
+                                                <option>Male</option>
+                                                <option>Female</option>
+                                            </Form.Control>
+                                            </Form.Group>
+
+                                           
+                                        </Form.Row>
+
+                                        <Form.Row>
+
+                                            <Form.Group as={Col}>
+                                            <Form.Label>Class:</Form.Label>
+                                            <Form.Control
+                                             name="theclass"
+                                             value={this.state.view_object.theclass}
+                                             onChange={this.handleEditInputs}
+                                             as="select">
+                                                <option>Class...</option>
+                                                <option>6</option>
+                                                <option>7</option>
+                                                <option>8</option>
+                                            </Form.Control>
+                                            </Form.Group>
+
+                                            <Form.Group as={Col}>
+                                            <Form.Label>Section:</Form.Label>
+                                            <Form.Control 
+                                             name="section"
+                                             value={this.state.view_object.section}
+                                             onChange={this.handleEditInputs}
+                                            as="select">
+                                                <option>Section...</option>
+                                                <option>A</option>
+                                                <option>B</option>
+                                                <option>C</option>
+                                            </Form.Control>
+                                            </Form.Group>
+                                        </Form.Row>
+
+                                        <Form.Row>
+                                        <Form.Group as={Col}>
+                                        <Form.Label>Parent's Name:</Form.Label>
+                                            <Form.Control
+                                                required
+                                                type="text"
+                                                //placeholder="Enter Parent's Name"
+                                                name="pname"
+                                                value={this.state.view_object.pname}
+                                                onChange={this.handleEditInputs}
+                                                />
+                                            </Form.Group>
+                                           
+                                        </Form.Row>
+
+                                        <Form.Row>
+                                            <Form.Group as={Col}>
+                                            <Form.Label>Parent's Email:</Form.Label>
+                                                <Form.Control
+                                                name="pemail"
+                                                value={this.state.view_object.pemail}
+                                                onChange={this.handleEditInputs}
+                                                required
+                                                type="email"
+                                                // placeholder="Parent's Email"
+                                                />
+                                            </Form.Group>
+
+                                            <Form.Group as={Col}>
+                                            <Form.Label>Parent's Contact:</Form.Label>
+                                                <Form.Control
+                                                 name="pcontact"
+                                                 value={this.state.view_object.pcontact}
+                                                 onChange={this.handleEditInputs}
+                                                required
+                                                type="text"
+                                                // placeholder="Enter Parent's Contact"
+                                                />
+                                            </Form.Group>
+
+
+                                        </Form.Row>
+
+                            
+                            </div>
+                    </Form>
+
+
+                        :
+
                         <Container>
                             <Row><h4>Personal Information</h4></Row>
                             <Row>
@@ -393,11 +542,23 @@ handleSearch = (e) => {
                                     {this.state.view_object.pcontact}
                                 </Col>
                             </Row>
-                        </Container>
+                        </Container>}
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button variant="secondary" onClick={this.handleViewModalClose}>Close</Button>
-                        <Button variant="danger" onClick={this.handleView}>Edit</Button>
+                    {this.state.showedit?
+                        <div>
+                            {
+                            this.state.updating?
+                                <Button variant="warning" disabled >Updating...</Button>
+                                :
+                                <Button variant="warning" onClick={this.handleEditUpdate}>Update</Button>
+                            }
+                        </div>
+                        :
+                        <div>
+                        {/* <Button variant="secondary" onClick={this.handleViewModalClose}>Close</Button> */}
+                        <Button variant="danger" onClick={this.handleEdit}>Edit</Button>
+                        </div>}
                     </Modal.Footer>
                 </Modal>
 
@@ -417,10 +578,11 @@ handleSearch = (e) => {
                                     <div>
                                     <Form.Row>
                                         <Form.Group as={Col}>
+                                        <Form.Label>Name:</Form.Label>
                                             <Form.Control
                                                 required
                                                 type="text"
-                                                placeholder="Enter Student Name"
+                                                // placeholder="Enter Student Name"
                                                 name="name"
                                                 value={this.state.name}
                                                 onChange={this.handleAddInputs}
@@ -431,6 +593,7 @@ handleSearch = (e) => {
 
                                         <Form.Row>
                                         <Form.Group as={Col}>
+                                        <Form.Label>Gender:</Form.Label>
                                             <Form.Control
                                              required
                                              name="gender"
@@ -450,6 +613,7 @@ handleSearch = (e) => {
                                         <Form.Row>
 
                                             <Form.Group as={Col}>
+                                            <Form.Label>Class:</Form.Label>
                                             <Form.Control
                                              name="theclass"
                                              value={this.state.theclass}
@@ -463,10 +627,11 @@ handleSearch = (e) => {
                                             </Form.Group>
 
                                             <Form.Group as={Col}>
+                                            <Form.Label>Section:</Form.Label>
                                             <Form.Control 
                                              name="section"
                                              value={this.state.section}
-                                             onChange={this.handdInputs}
+                                             onChange={this.handleAddInputs}
                                             as="select">
                                                 <option>Section...</option>
                                                 <option>A</option>
@@ -478,10 +643,11 @@ handleSearch = (e) => {
 
                                         <Form.Row>
                                         <Form.Group as={Col}>
+                                        <Form.Label>Parent's Name:</Form.Label>
                                             <Form.Control
                                                 required
                                                 type="text"
-                                                placeholder="Enter Parent's Name"
+                                               // placeholder="Enter Parent's Name"
                                                 name="pname"
                                                 value={this.state.pname}
                                                 onChange={this.handleAddInputs}
@@ -492,24 +658,26 @@ handleSearch = (e) => {
 
                                         <Form.Row>
                                             <Form.Group as={Col}>
+                                            <Form.Label>Parent's Email:</Form.Label>
                                                 <Form.Control
                                                 name="pemail"
                                                 value={this.state.pemail}
                                                 onChange={this.handleAddInputs}
                                                 required
                                                 type="email"
-                                                placeholder="Parent's Email"
+                                                // placeholder="Parent's Email"
                                                 />
                                             </Form.Group>
 
                                             <Form.Group as={Col}>
+                                            <Form.Label>Parent's Contact:</Form.Label>
                                                 <Form.Control
                                                  name="pcontact"
                                                  value={this.state.pcontact}
                                                  onChange={this.handleAddInputs}
                                                 required
                                                 type="text"
-                                                placeholder="Enter Parent's Contact"
+                                                // placeholder="Enter Parent's Contact"
                                                 />
                                             </Form.Group>
 
@@ -534,7 +702,7 @@ handleSearch = (e) => {
                 {/* Search Box and Add Faculty */}
                 
                 {/* <Navbar sticky="top">
-                <Input type="text" value={this.state.Search} onChange={this.handleSearch} placeholder="Search Student name"></Input>
+                // <Input type="text" value={this.state.Search} onChange={this.handleSearch} placeholder="Search Student name"></Input>
                       <Navbar.Collapse className="justify-content-end" >
                             <Button onClick={this.handleAddModalShow}> <FaPlus/> Add Student</Button>
                       </Navbar.Collapse>
@@ -572,17 +740,27 @@ handleSearch = (e) => {
                     <tbody>
 
                         {
-                            this.state.studentData.map(({section,theclass,name},id) => 
+                            this.state.studentData.map(({section,theclass,name,_id},id) => 
                                 <tr key={id}>
                                     <td><InputGroup.Prepend><InputGroup.Checkbox /> </InputGroup.Prepend> </td>
-                                    <td>{id}</td>
+                                    <td>{_id}</td>
                                     <td>{name}</td>
                                     <td>{`${theclass}-${section}`}</td>
                                     <td>
                                         {/* <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">View/Edit</Tooltip>}>
                                             <span className="d-inline-block"> */}
-                                                <Button variant="success" onClick={(e)=>this.handleView(e,name)}> <FaEye/> View/Edit</Button>
-                                                <Button variant="danger" onClick={(e) => this.handleDeleteTid(e,name)}> <FaTrashAlt/> Delete</Button>
+                                            <Container>
+                                                <Row>
+                                                <Col xs={4.5}>
+                                                
+                                                <Button variant="success" onClick={(e)=>this.handleView(e,_id)}> <FaEye/> View/Edit</Button>
+                                                </Col>
+                                                <Col>
+                                                <Button variant="danger" onClick={(e) => this.handleDeleteTid(e,_id)}> <FaTrashAlt/> Delete</Button>
+                                                </Col>
+                                                </Row>
+
+                                            </Container>
                                             {/* </span>
                                             </OverlayTrigger> */}
                                     </td>

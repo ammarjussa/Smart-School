@@ -143,7 +143,7 @@ module.exports = function(app){
         
 
 
-/////////////////CLASS FUNCTIONS////////////////////////////////
+///////////////////////CLASS FUNCTIONS////////////////////////////////
     
     /*Show Class*/
     app.post('/showclass',(req,res)=> {
@@ -240,19 +240,23 @@ module.exports = function(app){
 
         db.checkStudent(account.name, account.pemail, (obj)=> {
             if(obj) {
+                console.log('Duplicate detected!')
                 return res.send({message: 'Unsuccessful'});
             }
-            db.addStudent(account,(result) => {
+            else {
+                db.addStudent(account,(result) => {
                 console.log('Student added');
                 return res.send({message: 'Success', theid: result.ops[0]._id});
-            }); 
+            
+                });
+            }  
         });
 
            
     });
 
     /*Update Students */
-    app.post('/updateStudent', (req,res)=>{
+    app.post('/updatestudent', (req,res)=>{
         account = {
             "_id":req.body.id,
             "name":req.body.name,
@@ -346,9 +350,12 @@ module.exports = function(app){
             if(obj) {
                 return res.send({message: 'Unsuccessful'});
             }
-            db.addFaculty(account,(result)=> {
-                return res.send({message: 'Success', theid: result.ops[0]._id});
-            });
+
+            else {
+                db.addFaculty(account,(result)=> {
+                    return res.send({message: 'Success', theid: result.ops[0]._id});
+                });  
+            }
         });
     });
 

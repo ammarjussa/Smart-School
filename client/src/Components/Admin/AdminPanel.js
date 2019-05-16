@@ -49,7 +49,7 @@ class AdminPanel extends Component {
             <Col sm={3}>
               <Nav sticky="top" variant="pills" className="flex-column">
                 <Nav.Item>
-                  <Nav.Link onSelect={this.handleItemClick} eventKey="Dashboard">Dasboard</Nav.Link>
+                  <Nav.Link onSelect={this.handleItemClick} eventKey="Dashboard">Dashboard</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
                   <Nav.Link onSelect={this.handleItemClick} eventKey="Students">Students</Nav.Link>
