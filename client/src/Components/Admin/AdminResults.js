@@ -13,7 +13,7 @@ import {
     Modal,
     Form
 } from 'react-bootstrap';
-import { FaEye,FaTrashAlt,FaPlus,FaArrowRight} from "react-icons/fa";
+import { FaEye,FaTrashAlt,FaPlus,FaArrowRight, FaCheck} from "react-icons/fa";
 import { Input, ModalHeader } from 'semantic-ui-react';
 import axios from "axios"
 
@@ -72,16 +72,27 @@ componentDidMount(){
 }
 
 
+updateIsSent = (students,studentsbacku,id) => {
+    students.forEach((student) => {
+        if(student._id===id)
+        {
+          student.issent=true
+          this.setState({
+            studentData: students,
+            studentDataBackup: students
+          })
+        }
+    })
+}
+
+
 handleSendResult(e,id,name) {
   console.log(id)
   axios.post("/send-email",{id}).then((res) => {
         
-    //Make all check false
-      this.setState({
-          studentData: res.data.students,
-          studentDataBackup : res.data.students
-      })
-}).catch((e) => alert(e))
+    // Make all check false
+     this.updateIsSent(this.state.studentData,this.state.studentDataBackup,id)
+}).catch((e) => console.log(e))
 }
 
 
@@ -111,14 +122,22 @@ handleSendResult(e,id,name) {
                     <tbody>
 
                         {
-                            this.state.studentData.map(({section,theclass,name,_id},id) => 
+                            this.state.studentData.map(({section,theclass,name,_id,issent},id) => 
                                 <tr key={id}>
                                     {/* <td><InputGroup.Prepend><InputGroup.Checkbox /> </InputGroup.Prepend> </td> */}
                                     <td>{_id}</td>
                                     <td>{name}</td>
                                     <td>{`${theclass}-${section}`}</td>
                                     <td>
-                                      <Button variant="success" onClick={(e) => this.handleSendResult(e,_id,name)}>  Send <FaArrowRight/> </Button>
+                                      {
+                                        issent?
+
+                                        <Button variant="danger" onClick={(e) => this.handleSendResult(e,_id,name)}>  Sent <FaCheck/> </Button>
+
+                                        :
+                                    
+                                        <Button variant="success" onClick={(e) => this.handleSendResult(e,_id,name)}>  Send <FaArrowRight/> </Button>
+                                    }
                                     </td>
                                     
                                 </tr>

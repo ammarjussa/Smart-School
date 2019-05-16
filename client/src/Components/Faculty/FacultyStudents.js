@@ -44,12 +44,14 @@ class FStudentsTab extends Component {
       let email = Profile.getEmail()              
       // axios.post("/facultystudents",{email}).then((res) => {
           
-      axios.post("/students",{email}).then((res) => {
-          //Make all check false
-            this.setState({
-                studentData: res.data.students,
-                studentDataBackup : res.data.students
-            })
+      axios.post("/facstu",{email}).then((res) => {
+        if(res.data.students)
+        {
+          this.setState({
+              studentData: res.data.students,
+              studentDataBackup : res.data.students
+          })
+        }
       }).catch((e) => alert(e))
   }
   

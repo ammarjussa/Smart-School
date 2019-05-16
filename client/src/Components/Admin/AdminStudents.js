@@ -26,23 +26,20 @@ class StudentsTab extends Component {
     selectAll: false,
     view_isview: false,
     view_object: {},
-    edit:{
-        id: '',
-        isEdit: false
-    },
     add_showmodal:false,
     add_studentid: null,
-    add_class: '',
-    add_section: '',
-    add_gender: '',
-    add_name: '',
-    add_pname: '',
-    add_pcontact: '',
-    add_pemail: '',
+    theclass: '',
+    section: '',
+    gender: '',
+    name: '',
+    pname: '',
+    pcontact: '',
+    pemail: '',
     delete_last_deleted: {},
     delete_last_deleted_id: null,
     delete_showmodal: false,
     adding: false,
+    showedit: false,
     Search: ''
 }
 
@@ -109,7 +106,7 @@ handleDelete = (e) => {
       prevState.delete_last_deleted = fObject 
       this.setState(prevState, () => {
           let del_Obj = {
-              name:fObject.name
+              id:fObject._id
           }
 
       axios.post("/deleteStudent",del_Obj).then((res) => {
@@ -118,7 +115,7 @@ handleDelete = (e) => {
           // this.setState(prevState)
           var prevState = Object.assign({},this.state)
           let fd = prevState.studentData
-          fd = fd.filter((f) => f.name !== fObject.name)
+          fd = fd.filter((f) => f._id !== fObject._id)
           prevState.studentData = fd
           prevState.studentDataBackup = fd
           this.setState(prevState)
@@ -177,30 +174,41 @@ handleSubmitAddStudent = (e) => {
   let obj = this.state
       let studentInfo = {
 
-          "studentid": 1,
-          "name": obj.add_name,
-          "pcontact": obj.add_pcontact,
-          "gender": obj.add_gender,
-          "pemail": obj.add_pemail,
-          "section": obj.add_section,
-          "theclass": obj.add_class,
-          "pname": obj.add_pname,
+          "name": obj.name,
+          "pcontact": obj.pcontact,
+          "gender": obj.gender,
+          "pemail": obj.pemail,
+          "section": obj.section,
+          "theclass": obj.class,
+          "pname": obj.pname,
       }
 
       console.log(studentInfo)
       axios.post("/registerStudent",studentInfo).then((res)=>{
           console.log(res.data.message)
+          this.setState({adding:false})
           if(res.data.message === "Success")
           {
+
+            let studentInfo = {
+                "_id": res.data.theid,
+                "name": obj.name,
+                "pcontact": obj.pcontact,
+                "gender": obj.gender,
+                "pemail": obj.pemail,
+                "section": obj.section,
+                "theclass": obj.class,
+                "pname": obj.pname,
+            }
               var prevState = Object.assign({},this.state)
               prevState.add_showmodal = false
-              prevState.add_class= ''
-              prevState.add_section= ''
-              prevState.add_gender= ''
-              prevState.add_name= ''
-              prevState.add_pcontact= ''
-              prevState.add_pemail= ''
-              prevState.add_pname= ''
+              prevState.theclass= ''
+              prevState.section= ''
+              prevState.gender= ''
+              prevState.name= ''
+              prevState.pcontact= ''
+              prevState.pemail= ''
+              prevState.pname= ''
               let fd = prevState.studentData
               fd.push(studentInfo)
               prevState.studentData = fd
@@ -215,7 +223,50 @@ handleSubmitAddStudent = (e) => {
 }
 
 handleEdit = () => {
+    this.setState({showedit: true})
+}
 
+handleEditUpdate = () => {
+    this.setState({updating: true})
+    let obj = this.state.view_object
+        
+        let facultyInfo = {
+
+            "id": obj._id,
+            "name": obj.name,
+            "contact": obj.contact,
+            "gender": obj.gender,
+            "email": obj.email,
+            "section": obj.section,
+            "class": obj.class,
+            "subject": obj.subject,
+        }
+
+        console.log(facultyInfo)
+        axios.post("/updatestudent",facultyInfo).then((res)=>{
+            console.log(res.data.message)
+            if(res.data.message === "Success")
+            {
+                this.setState({updating:false})
+                // var prevState = Object.assign({},this.state)
+                // prevState.add_showmodal = false
+                // prevState.view_object.class= ''
+                // prevState.view_object.subject= ''
+                // prevState.view_object.gender= ''
+                // prevState.view_object.name= ''
+                // prevState.view_object.contact= ''
+                // prevState.view_object.email= ''
+                // let fd = prevState.facultyData
+                // prevState.facultyData = fd
+                // this.setState(prevState)
+                this.setState({showedit: false})
+            }
+            else{
+                alert("Something went Wrong!")
+            }
+
+
+        }).catch((e) => console.log(e))
 }
 
 handleAddInputs = (ev) => {
@@ -370,8 +421,8 @@ handleSearch = (e) => {
                                                 required
                                                 type="text"
                                                 placeholder="Enter Student Name"
-                                                name="add_name"
-                                                value={this.state.add_name}
+                                                name="name"
+                                                value={this.state.name}
                                                 onChange={this.handleAddInputs}
                                                 />
                                             </Form.Group>
@@ -382,8 +433,8 @@ handleSearch = (e) => {
                                         <Form.Group as={Col}>
                                             <Form.Control
                                              required
-                                             name="add_gender"
-                                             value={this.state.add_gender}
+                                             name="gender"
+                                             value={this.state.gender}
                                              onChange={this.handleAddInputs}
                                              as="select"
                                              >
@@ -400,8 +451,8 @@ handleSearch = (e) => {
 
                                             <Form.Group as={Col}>
                                             <Form.Control
-                                             name="add_class"
-                                             value={this.state.add_class}
+                                             name="theclass"
+                                             value={this.state.theclass}
                                              onChange={this.handleAddInputs}
                                              as="select">
                                                 <option>Class...</option>
@@ -413,9 +464,9 @@ handleSearch = (e) => {
 
                                             <Form.Group as={Col}>
                                             <Form.Control 
-                                             name="add_section"
-                                             value={this.state.add_section}
-                                             onChange={this.handleAddInputs}
+                                             name="section"
+                                             value={this.state.section}
+                                             onChange={this.handdInputs}
                                             as="select">
                                                 <option>Section...</option>
                                                 <option>A</option>
@@ -431,8 +482,8 @@ handleSearch = (e) => {
                                                 required
                                                 type="text"
                                                 placeholder="Enter Parent's Name"
-                                                name="add_pname"
-                                                value={this.state.add_pname}
+                                                name="pname"
+                                                value={this.state.pname}
                                                 onChange={this.handleAddInputs}
                                                 />
                                             </Form.Group>
@@ -442,8 +493,8 @@ handleSearch = (e) => {
                                         <Form.Row>
                                             <Form.Group as={Col}>
                                                 <Form.Control
-                                                name="add_pemail"
-                                                value={this.state.add_pemail}
+                                                name="pemail"
+                                                value={this.state.pemail}
                                                 onChange={this.handleAddInputs}
                                                 required
                                                 type="email"
@@ -453,8 +504,8 @@ handleSearch = (e) => {
 
                                             <Form.Group as={Col}>
                                                 <Form.Control
-                                                 name="add_pcontact"
-                                                 value={this.state.add_pcontact}
+                                                 name="pcontact"
+                                                 value={this.state.pcontact}
                                                  onChange={this.handleAddInputs}
                                                 required
                                                 type="text"

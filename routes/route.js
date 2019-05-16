@@ -17,40 +17,103 @@ module.exports = function(app){
             var totalmarks = Number(item.q1) + Number(item.q2) + Number(item.q3)+ Number(item.midterm) + Number(item.final);
             console.log('Received Items!');
 
-             const page = `
-                <!DOCTYPE html>
-                <html lang="en">
-                <head>
-                <!-- Theme Made By www.w3schools.com - No Copyright -->
-                <title>Bootstrap Theme Company Page</title>
-                <meta charset="utf-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1">
-                <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
-                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
-                <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-                <style>
-                    #name {
-                    font-size: 20px,
-                    }
-
-                </style>
-                </head>
-                <body>
-
-                <div>
-                <h1>Smart School</h1> 
-                <p id="name">Student Name: ${item.name}</p><br>
-                <h2 id="class">Class: ${item.theclass}  Section: ${item.section}</h2>
-                <h3 id="name">Parent's Name: ${item.pname}</h3><br>
-                <h3 id="name">No. of Presence: ${item.presenceNumber}/50</h3><br>
-                <h3>Quiz1: ${item.q1} Quiz2: ${item.q2} Quiz3: ${item.q3} Mid-term: ${item.midterm} Final: ${item.final}</h3>
-                <h4 id="name">Percentage: ${totalmarks/totalsum*100}%</h4><br>
-
-                </div>
-
-                </body>
-                </html>
-                `;
+             const page = `<!DOCTYPE html>
+             <html lang="en">
+             <head>
+               <title> Student Report Card </title>
+               <meta charset="utf-8">
+               <meta name="viewport" content="width=device-width, initial-scale=1">
+               <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+               <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+               <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+               <style type="text/css">
+                     table {border-collapse: collapse;}
+                     h2 {text-align: center}
+                     .table {float: center}
+                     .mydiv {
+                         border: 2px solid;
+                         padding: 20px; 
+                         width: 500px;
+                         resize: both;
+                         overflow: auto;
+                     }
+                     tbody >tr:nth-child(odd) {background: #D1D0CE;}
+                     #details {font-family:times new roman;}
+                     #attendance {float: right;}
+                     td {
+                       border: 1px solid #726E6D;
+                       padding: 15px;
+                       text-align:center;
+                     }
+                     thead{
+                       font-weight:bold;
+                       text-align:center;
+                       background: #625D5D;
+                       color:white;
+                     }
+                     .footer {
+                       text-align:right;
+                       font-weight:bold;
+                     }
+                     #title {
+                       font-family:times new roman;
+                       text-align:center;
+                       background: #625D5D;
+                       color: white;
+                     }
+               </style>
+             </head>
+             <body>
+                 <div class="mydiv">
+                     <div class="container">
+                         <div class="jumbotron" id="title">
+                             <h1>Smart school</h1>
+                         </div>
+                     </div>
+                     <div class="container">
+                         <div class="jumbotron">
+                             <div class="container" id="details">
+                                 <h2><b>Student report card</b></h2>
+                                 <h3><b>Name: </b> ${item.name} </h3>
+                                 <h3><b>Class: </b> ${item.theclass}</h3>
+                                 <h3><b>Section: </b> ${item.section}</h3>
+                                 <h3><b>Attendance: </b> ${(Number(item.presenceNumber)/50)*100} %</h3>
+                             </div>
+                             <table class="table">
+                                 <thead>
+                                   <tr>
+                                     <td> Quiz 1<br>( /10) </td>
+                                     <td> Quiz 2<br>( /10) </td>
+                                     <td> Quiz 3<br>( /10) </td>
+                                     <td> Mid-Term<br>( /50) </td>
+                                     <td> Final<br>( /100) </td>
+                                   </tr>
+                                 </thead>
+                                 <tbody>
+                                   <tr>
+                                     <td>${item.q1}</td>
+                                     <td>${item.q2}</td>
+                                     <td>${item.q3}</td>
+                                     <td>${item.midterm}</td>
+                                     <td>${item.final}</td>
+                                   </tr>
+                                 </tbody>
+                                 <tfoot>
+                                   <tr>
+                                     <td colspan="1" class="footer">Total percentage: </td>
+                                     <td colspan="5">${totalmarks/totalsum*100}</td>
+                                   </tr>
+                                   <tr>
+                                     <td colspan="1" class="footer">Remarks: </td>
+                                     <td colspan="5">Average</td>
+                                   </tr>
+                                 </tfoot>
+                             </table>
+                         </div>
+                     </div>
+                 </div>
+             </body>
+             </html>`;
     
             let transporter = nodeMailer.createTransport({
                 host: 'smtp.gmail.com',
@@ -73,7 +136,7 @@ module.exports = function(app){
                 if (error) {
                     return console.log(error);
                 }
-                    console.log('Message sent successfully');
+                return res.send({message: 'Success'});
                 });
         });
     })
@@ -92,11 +155,9 @@ module.exports = function(app){
 
     /*Add Class*/
     app.post('/addclass', (req,res)=> {
-        mysections = []
-        mysections.push(req.body.section);
         account = {
             "theclass":req.body.theclass,
-            "section": mysections,
+            "section": req.body.section,
             "cap":req.body.cap
         }
         console.log(`${account.theclass}, ${account.section}, ${account.cap}`);
@@ -106,16 +167,16 @@ module.exports = function(app){
         })
     });
 
-    /*Add Section*/
-    app.post('/addsection', (req,res)=> {
-       var classes = req.body.theclass;
-       var section = req.body.section;
+    // /*Add Section*/
+    // app.post('/addsection', (req,res)=> {
+    //    var classes = req.body.theclass;
+    //    var section = req.body.section;
 
-       db.addSections(classes, section, ()=> {
-           console.log('Section Added');
-           return res.send({message: 'Success'});
-       })
-    });
+    //    db.addSections(classes, section, ()=> {
+    //        console.log('Section Added');
+    //        return res.send({message: 'Success'});
+    //    })
+    // });
 
     /*Delete Class*/
     app.post('/deleteclass', (req,res)=> {
@@ -127,6 +188,23 @@ module.exports = function(app){
         })
     })
 
+    /*Update Class */
+    app.post('/updateclass',(req,res)=> {
+        account = {
+            "_id":req.body.id,
+            "theclass":req.body.theclass,
+            "section": req.body.section,
+            "cap":req.body.cap
+        }
+        console.log(`${account.theclass}, ${account.section}, ${account.cap}`);
+        db.updateClasses(account, (obj)=> {
+            console.log('Class Updated');
+            return res.send({message: 'Success'});
+        })
+    })
+
+
+
 
 //////////////////STUDENT FUNCTIONS////////////////////////////////////
 
@@ -134,7 +212,7 @@ module.exports = function(app){
     app.post('/students', (req,res)=>{
         db.displayStudents((items)=> {
             console.log('Displaying Students.....');
-            return res.send({students: items});
+            return res.send({message: 'Success', students: items});
         })
     });
 
@@ -154,20 +232,29 @@ module.exports = function(app){
             "q2":0,
             "q3":0,
             "midterm":0,
-            "final":0
+            "final":0,
+            "issent":false
         };
         
         console.log(`${account.name}, ${account.pcontact}`);
 
-        db.addStudent(account,(result) => {
-            console.log('Student added');
-            return res.send({message: 'Success', theid: result.ops[0]._id});
-        });     
+        db.checkStudent(account.name, account.pemail, (obj)=> {
+            if(obj) {
+                return res.send({message: 'Unsuccessful'});
+            }
+            db.addStudent(account,(result) => {
+                console.log('Student added');
+                return res.send({message: 'Success', theid: result.ops[0]._id});
+            }); 
+        });
+
+           
     });
 
     /*Update Students */
     app.post('/updateStudent', (req,res)=>{
         account = {
+            "_id":req.body.id,
             "name":req.body.name,
             "theclass":req.body.theclass,
             "section":req.body.section,
@@ -179,7 +266,7 @@ module.exports = function(app){
         
         console.log(`${account.name}, ${account.pcontact}`);
 
-        db.modifyStudent(account,() => {
+        db.modifyStudent(account,(obj) => {
             console.log('Student updated');
             return res.send({message: 'Success'});
         });             
@@ -255,8 +342,13 @@ module.exports = function(app){
 
         console.log(`${account.name}, ${account.contact}`);
     
-        db.addFaculty(account,(result)=> {
-            return res.send({message: 'Success', theid: result.ops[0]._id});
+        db.checkFaculty(account.name, account.email, (obj)=> {
+            if(obj) {
+                return res.send({message: 'Unsuccessful'});
+            }
+            db.addFaculty(account,(result)=> {
+                return res.send({message: 'Success', theid: result.ops[0]._id});
+            });
         });
     });
 
@@ -293,17 +385,24 @@ module.exports = function(app){
         })
     })
 
-    app.post('/facultystudents'),(req,res) => {
+    app.post('/facstu',(req,res) => {
         var email=req.body.email;
         console.log(`${email}`);
         
         db.displaySingleFaculty(email,items => {
-            db.showStudentsToFaculty(items.class, items.section, students => {
-                console.log('Displaying students');
-                return res.send({message:'Success', students: students});
-            })
+            if(items) {
+                db.showStudentsToFaculty(items.theclass, items.section, students => {
+                    console.log("Displaying faculty's students");
+                    // console.log(students);
+                    return res.send({message:'Success', students: students});
+                })
+            }
+
+            else {
+                return res.send({message: 'Unsuccessful'});
+            }
         })
-    }
+    });
 
     
 /////////////////////////LOGIN FUNCTION//////////////////////////////////////////////

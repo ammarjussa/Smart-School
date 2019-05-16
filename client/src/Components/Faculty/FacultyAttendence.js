@@ -38,13 +38,17 @@ class Attendence extends Component {
   componentDidMount(){
     //Extract data 
     let email = Profile.getEmail()              
-    axios.post("/facultystudents",{email}).then((res) => {
+    // let email = "ahmed@gmail.com"               
+    axios.post("/facstu",{email}).then((res) => {
         
         //Make all check false
+        if(res.data.students)
+        {
           this.setState({
               studentData: res.data.students,
               studentDataBackup : res.data.students
           })
+        }
     }).catch((e) => alert(e))
 }
 
@@ -53,7 +57,7 @@ markPresent(id) {
   axios.post("/attendence",{id,isPresent}).then((res) => {
     if(res.data.message !== "Success")
     {
-      alert(`Error: ${id}'s attendance not marked! `)
+      console.log(`Error: ${id}'s attendance not marked! `)
     }
   })
 }
