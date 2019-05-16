@@ -91,7 +91,6 @@ markAbsent(id) {
           {/* Table */}
           <Table responsive hover>
               <thead>
-                  <th><InputGroup.Checkbox checked={this.state.selectAll} onChange={this.handleChangeSelectAll}/></th>
                   <th> id</th>
                   <th> Name</th>
                   <th> Class-Section </th>
@@ -103,7 +102,6 @@ markAbsent(id) {
                   {
                       this.state.studentData.map(({section,theclass,name,_id,attendence,presenceNumber},id) => 
                           <tr key={id}>
-                              <td><InputGroup.Prepend><InputGroup.Checkbox /> </InputGroup.Prepend> </td>
                               <td>{_id}</td>
                               <td>{name}</td>
                               <td>{`${theclass}-${section}`}</td>

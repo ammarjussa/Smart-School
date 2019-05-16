@@ -723,7 +723,6 @@ class Faculty extends Component {
                 {/* Table */}
                 <Table responsive hover>
                     <thead>
-                        <th><InputGroup.Checkbox checked={this.state.selectAll} onChange={this.handleChangeSelectAll}/></th>
                         <th> id</th>
                         <th> Name</th>
                         <th> Email </th>
@@ -734,15 +733,24 @@ class Faculty extends Component {
                         {
                             this.state.facultyData.map(({ _id, name,subject,email,contact},id) => 
                                 <tr key={id}>
-                                    <td><InputGroup.Prepend><InputGroup.Checkbox checked={this.state.facultyData.check} onChange={this.handleChangeCheckbox}/> </InputGroup.Prepend> </td>
                                     <td>{_id}</td>
                                     <td>{name}</td>
                                     <td>{email}</td>
                                     <td>
                                         {/* <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">View/Edit</Tooltip>}>
                                             <span className="d-inline-block"> */}
-                                                <Button variant="success" onClick={(e) => this.handleView(e,_id)}> <FaEye/> View/Edit</Button>
+                                                <Container>
+                                                <Row>
+                                                <Col xs={4.5}>
+                                                
+                                                <Button variant="success" onClick={(e)=>this.handleView(e,_id)}> <FaEye/> View/Edit</Button>
+                                                </Col>
+                                                <Col>
                                                 <Button variant="danger" onClick={(e) => this.handleDeleteTid(e,_id)}> <FaTrashAlt/> Delete</Button>
+                                                </Col>
+                                                </Row>
+
+                                            </Container>
                                             {/* </span>
                                             </OverlayTrigger> */}
                                     </td>

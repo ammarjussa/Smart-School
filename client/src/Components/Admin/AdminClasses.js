@@ -597,7 +597,6 @@ adding = (e) =>{
                 {/* Table */}
                 <Table responsive hover>
                     <thead>
-                        <th><InputGroup.Checkbox checked={this.state.selectAll} onChange={this.handleChangeSelectAll}/></th>
                         <th> id </th>
                         <th> class-Section</th>
                         <th>  Cap   </th>
@@ -608,16 +607,24 @@ adding = (e) =>{
                         {
                             this.state.classesData.map(({section,theclass,cap,_id},id) => 
                                 <tr key={id}>
-                                    <td><InputGroup.Prepend><InputGroup.Checkbox /> </InputGroup.Prepend> </td>
                                     <td>{_id}</td>
                                     <td>{theclass}-{section}</td>
                                     <td>{cap}</td>
                                     <td>
                                         {/* <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">View/Edit</Tooltip>}>
                                             <span className="d-inline-block"> */}
-                                                <Button variant="success" onClick={(e) => this.handleView(e,_id)}> <FaEye/> View/Edit</Button>
-                                                {/* <Button variant="danger" onClick={(e) => this.handleDeleteTid(e,theclass)}> <FaTrashAlt/> Delete</Button> */}
+                                                 <Container>
+                                                <Row>
+                                                <Col xs={4.5}>
+                                                
+                                                <Button variant="success" onClick={(e)=>this.handleView(e,_id)}> <FaEye/> View/Edit</Button>
+                                                </Col>
+                                                <Col>
                                                 <Button variant="danger" onClick={(e) => this.handleDeleteTid(e,_id)}> <FaTrashAlt/> Delete</Button>
+                                                </Col>
+                                                </Row>
+
+                                            </Container>
                                             {/* </span>
                                             </OverlayTrigger> */}
                                     </td>
