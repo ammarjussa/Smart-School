@@ -110,8 +110,10 @@ class Faculty extends Component {
                 // prevState.facultyData = this.state.facultyData.filter((f) => f.facultyid !== del_Obj.facultyid && f.email !== del_Obj.email)
                 // this.setState(prevState)
                 var prevState = Object.assign({},this.state)
-                let fd = prevState.facultyData
+                let fd = prevState.facultyDataBackup
+                console.log(fObject._id)
                 fd = fd.filter((f) => f._id !== fObject._id)
+                console.log(fd)
                 prevState.facultyData = fd
                 prevState.facultyDataBackup = fd
                 this.setState(prevState)
@@ -168,62 +170,85 @@ class Faculty extends Component {
     handleSubmitAddFaculty = (e) => {
         e.preventDefault()
         let obj = this.state
-        
         if(obj.password1 === obj.password2)
         {
-            
-            let facultyInfo = {
-
-                "name": obj.name,
-                "contact": obj.contact,
-                "gender": obj.gender,
-                "email": obj.email,
-                "section": obj.section,
-                "class": obj.class,
-                "password": obj.password1,
-                "subject": obj.subject,
+            if(obj.gender === ""|| obj.gender==="Gender...")
+            {
+                alert("Please select a gender")
             }
+            else if(obj.subject==="" || obj.subject==="Subject...")
+            {
+                alert("Please select a subject")
+            }
+            else if(obj.class==="" || obj.class==="Class...")
+            {
+                alert("Please select a class")
+            }
+            else if(obj.section==="" || obj.section==="Section...")
+            {
+                alert("Please select a section")
+            }
+            else{
+                this.setState({adding:true})
 
-            console.log(facultyInfo)
-            axios.post("/registerFaculty",facultyInfo).then((res)=>{
-                console.log(res.data.message)
-                this.setState({adding:false})
-                if(res.data.message === "Success")
-                {
+                let facultyInfo = {
 
-                    let facultyInfo = {
-
-                        "_id" : res.data.theid,
-                        "name": obj.name,
-                        "contact": obj.contact,
-                        "gender": obj.gender,
-                        "email": obj.email,
-                        "section": obj.section,
-                        "class": obj.class,
-                        "password": obj.password1,
-                        "subject": obj.subject,
+                    "name": obj.name,
+                    "contact": obj.contact,
+                    "gender": obj.gender,
+                    "email": obj.email,
+                    "section": obj.section,
+                    "class": obj.class,
+                    "password": obj.password1,
+                    "subject": obj.subject,
+                }
+    
+                console.log(facultyInfo)
+                axios.post("/registerFaculty",facultyInfo).then((res)=>{
+                    console.log(res.data.message)
+                    this.setState({adding:false})
+                    if(res.data.message === "Success")
+                    {
+                        this.setState({adding:false})
+                        let facultyInfo = {
+    
+                            "_id" : res.data.theid,
+                            "name": obj.name,
+                            "contact": obj.contact,
+                            "gender": obj.gender,
+                            "email": obj.email,
+                            "section": obj.section,
+                            "class": obj.class,
+                            "password": obj.password1,
+                            "subject": obj.subject,
+                        }
+                        var prevState = Object.assign({},this.state)
+                        prevState.add_showmodal = false
+                        prevState.password1= ''
+                        prevState.password2= ''
+                        prevState.class= ''
+                        prevState.subject= ''
+                        prevState.gender= ''
+                        prevState.name= ''
+                        prevState.contact= ''
+                        prevState.email= ''
+                        let fd = prevState.facultyData
+                        fd.push(facultyInfo)
+                        prevState.facultyData = fd
+                        prevState.facultyDataBackup = fd
+                        this.setState(prevState)
+                    
                     }
-                    var prevState = Object.assign({},this.state)
-                    prevState.add_showmodal = false
-                    prevState.password1= ''
-                    prevState.password2= ''
-                    prevState.class= ''
-                    prevState.subject= ''
-                    prevState.gender= ''
-                    prevState.name= ''
-                    prevState.contact= ''
-                    prevState.email= ''
-                    let fd = prevState.facultyData
-                    fd.push(facultyInfo)
-                    prevState.facultyData = fd
-                    this.setState(prevState)
-                }
-                else{
-                    alert("Something went Wrong!")
-                }
-
+                    else if(res.data.message==="Unsuccessful")
+                    {
+                        alert("Duplicate Detected! Faculty already present")
+                    }
+                    else{
+                        alert("Something went Wrong!")
+                    }
 
             }).catch((e) => console.log(e))
+        } 
         }else{
             alert("Passwords do not match")
         }
@@ -317,7 +342,8 @@ class Faculty extends Component {
                 <h1>Faculty Information</h1>
                 {/* BreadCrumbs */}
                 <Breadcrumb>
-                    <Breadcrumb.Item href="/admin/Dashboard">Admin</Breadcrumb.Item>
+                    {/* <Breadcrumb.Item href="/admin/Dashboard">Admin</Breadcrumb.Item> */}
+                    <Breadcrumb.Item >Admin</Breadcrumb.Item>
                     <Breadcrumb.Item active>View Faculty</Breadcrumb.Item>
                 </Breadcrumb>
 
@@ -364,6 +390,8 @@ class Faculty extends Component {
                                     required
                                     type="text"
                                     placeholder="Enter Name"
+                                    maxlength="50"
+                                    pattern="^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$"
                                     name="name"
                                     value={this.state.view_object.name}
                                     onChange={this.handleEditInputs}
@@ -382,7 +410,7 @@ class Faculty extends Component {
                                  onChange={this.handleEditInputs}
                                  as="select"
                                  >
-                                    <option>Gender...</option>
+                                    <option value="nogender">Gender...</option>
                                     <option>Male</option>
                                     <option>Female</option>
                                 </Form.Control>
@@ -397,15 +425,19 @@ class Faculty extends Component {
                                     required
                                     type="tel"
                                     placeholder="Enter Contact"
-                                    pattern="^\+92(\s+)?\(?(17|25|29|33|44)\)?(\s+)?[0-9]{3}-?[0-9]{2}-?[0-9]{2}$" 
+                                    pattern="^((\+92)|(0092))-{0,1}\d{3}-{0,1}\d{7}$|^\d{11}$|^\d{4}-\d{7}$"
                                     />
+                                    <Form.Text className="text-muted">
+                                            Recommended Format: +92xxxxxxxxxx
+                                            </Form.Text>
                                 </Form.Group>
                             </Form.Row>
 
                             <Form.Row>
                             <Form.Group as={Col}>
                             <Form.Label>Subject</Form.Label>
-                                <Form.Control 
+                                <Form.Control
+                                required 
                                  name="subject"
                                  value={this.state.view_object.subject}
                                  onChange={this.handleEditInputs}
@@ -421,6 +453,7 @@ class Faculty extends Component {
                                 <Form.Group as={Col}>
                                 <Form.Label>Class</Form.Label>
                                 <Form.Control
+                                required
                                  name="class"
                                  value={this.state.view_object.class}
                                  onChange={this.handleEditInputs}
@@ -435,6 +468,7 @@ class Faculty extends Component {
                                 <Form.Group as={Col}>
                                 <Form.Label>Section</Form.Label>
                                 <Form.Control 
+                                required
                                  name="section"
                                  value={this.state.view_object.section}
                                  onChange={this.handleEditInputs}
@@ -455,8 +489,12 @@ class Faculty extends Component {
                                     value={this.state.view_object.email}
                                     onChange={this.handleEditInputs}
                                     required
+                                    pattern={`^[a-z0-9](\.?[a-z0-9_-]){0,}@[a-z0-9-]+\.([a-z]{1,6}\.)?[a-z]{2,6}$`}
+                                    maxlength="50"
                                     type="email"
-                                    placeholder="Enter Email"
+                                    // placeholder="Enter Email"
+                                    // 
+                                    // pattern= {}
                                     />
                                 </Form.Group>
                             </Form.Row>
@@ -551,11 +589,11 @@ class Faculty extends Component {
                     <Modal.Header> 
                         <Modal.Title>Add Faculty</Modal.Title>
                     </Modal.Header>
+                <Form onSubmit={this.handleSubmitAddFaculty}>
+                    <div>
                     <Modal.Body>
-                        <Card>
-                            <Card.Body>
-                                <Form onSubmit={this.handleSubmitAddFaculty}>
-                                    <div>
+                        {/* <Card> */}
+                            {/* <Card.Body> */}
                                     <Form.Row>
                                         <Form.Group as={Col}>
                                         <Form.Label>Name:</Form.Label>
@@ -564,6 +602,8 @@ class Faculty extends Component {
                                                 type="text"
                                                 // placeholder="Enter Name"
                                                 name="name"
+                                                maxlength="50"
+                                                pattern="^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$"
                                                 value={this.state.name}
                                                 onChange={this.handleAddInputs}
                                                 />
@@ -575,13 +615,13 @@ class Faculty extends Component {
                                         <Form.Group as={Col}>
                                         <Form.Label>Gender:</Form.Label>
                                             <Form.Control
-                                             required
+                                             required={true}
                                              name="gender"
                                              value={this.state.gender}
                                              onChange={this.handleAddInputs}
                                              as="select"
                                              >
-                                                <option>Gender...</option>
+                                                <option value="nogender">Gender...</option>
                                                 <option>Male</option>
                                                 <option>Female</option>
                                             </Form.Control>
@@ -595,11 +635,11 @@ class Faculty extends Component {
                                                 onChange={this.handleAddInputs}
                                                 required
                                                 type="tel"
-                                                placeholder="Enter Contact"
+                                                // placeholder="Enter Contact"
                                                 pattern="^((\+92)|(0092))-{0,1}\d{3}-{0,1}\d{7}$|^\d{11}$|^\d{4}-\d{7}$" 
                                                 />
                                             <Form.Text className="text-muted">
-                                            Format: +92xxxxxxxxxx
+                                            Recommended Format: +92xxxxxxxxxx
                                             </Form.Text>
                                             </Form.Group>
                                         </Form.Row>
@@ -608,6 +648,7 @@ class Faculty extends Component {
                                         <Form.Group as={Col}>
                                         <Form.Label>Subject:</Form.Label>
                                             <Form.Control 
+                                            required
                                              name="subject"
                                              value={this.state.subject}
                                              onChange={this.handleAddInputs}
@@ -623,6 +664,7 @@ class Faculty extends Component {
                                             <Form.Group as={Col}>
                                             <Form.Label>Class:</Form.Label>
                                             <Form.Control
+                                            required
                                              name="class"
                                              value={this.state.class}
                                              onChange={this.handleAddInputs}
@@ -637,6 +679,7 @@ class Faculty extends Component {
                                             <Form.Group as={Col}>
                                             <Form.Label>Section:</Form.Label>
                                             <Form.Control 
+                                            required
                                              name="section"
                                              value={this.state.section}
                                              onChange={this.handleAddInputs}
@@ -658,7 +701,8 @@ class Faculty extends Component {
                                                 onChange={this.handleAddInputs}
                                                 required
                                                 type="email"
-                                                // placeholder="Enter Email"
+                                                pattern={`^[a-z0-9](\.?[a-z0-9_-]){0,}@[a-z0-9-]+\.([a-z]{1,6}\.)?[a-z]{2,6}$`}
+                                                maxlength="50"
                                                 />
                                             </Form.Group>
                                         </Form.Row>
@@ -671,6 +715,7 @@ class Faculty extends Component {
                                                     type="password"
                                                     // placeholder="Enter Password"
                                                     name="password1"
+                                                    maxlength="15"
                                                     value={this.state.password1}
                                                     onChange={this.handleAddInputs}
                                                     />
@@ -682,21 +727,22 @@ class Faculty extends Component {
                                                     type="password"
                                                     // placeholder="Confirm Password"
                                                     name="password2"
+                                                    maxlength="15"
                                                     value={this.state.password2}
                                                     onChange={this.handleAddInputs}
                                                     />
                                                 </Form.Group>
                                         </Form.Row>
 
-                                        {this.state.adding? <Button disabled type="submit"><FaPlus/> Adding.. </Button> : <Button type="submit" ><FaPlus/> Add </Button>}
-                                        </div>
-                                </Form>
-                            </Card.Body>
-                        </Card> 
+                            {/* </Card.Body> */}
+                        {/* </Card>  */}
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={this.handleAddModalClose}>Close</Button>
+                         {this.state.adding? <Button disabled type="submit"><FaPlus/> Adding.. </Button> : <Button type="submit" ><FaPlus/> Add </Button>}
                     </Modal.Footer>
+                        </div>
+                </Form>
                 </Modal>
 
 
@@ -721,10 +767,11 @@ class Faculty extends Component {
                 <br/>
 
                 {/* Table */}
-                <Table responsive hover>
+                <Table responsive bordered striped hover>
                     <thead>
                         <th> id</th>
                         <th> Name</th>
+                        <th> Subject</th>
                         <th> Email </th>
                         <th>     </th>
                     </thead>
@@ -735,21 +782,21 @@ class Faculty extends Component {
                                 <tr key={id}>
                                     <td>{_id}</td>
                                     <td>{name}</td>
+                                    <td>{subject}</td>
                                     <td>{email}</td>
                                     <td>
                                         {/* <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">View/Edit</Tooltip>}>
                                             <span className="d-inline-block"> */}
-                                                <Container>
-                                                <Row>
+                                            <Container>
+                                              <Row>
                                                 <Col xs={4.5}>
                                                 
-                                                <Button variant="success" onClick={(e)=>this.handleView(e,_id)}> <FaEye/> View/Edit</Button>
+                                                    <Button variant="success" onClick={(e)=>this.handleView(e,_id)}> <FaEye/> View/Edit</Button>
                                                 </Col>
                                                 <Col>
-                                                <Button variant="danger" onClick={(e) => this.handleDeleteTid(e,_id)}> <FaTrashAlt/> Delete</Button>
+                                                    <Button variant="danger" onClick={(e) => this.handleDeleteTid(e,_id)}> <FaTrashAlt/> Delete</Button>
                                                 </Col>
-                                                </Row>
-
+                                              </Row>
                                             </Container>
                                             {/* </span>
                                             </OverlayTrigger> */}

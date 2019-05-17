@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Login Component renders without crashing  1`] = `
+<div>
+  <BrowserRouter>
+    <Switch>
+      <Route
+        component={[Function]}
+        exact={true}
+        path="/"
+      />
+      <ProtectedRoute
+        component={[Function]}
+        path="/admin"
+      />
+      <ProtectedRoute
+        component={[Function]}
+        path="/faculty"
+      />
+      <Route
+        component={[Function]}
+        path="*"
+      />
+    </Switch>
+  </BrowserRouter>
+</div>
+`;

@@ -105,11 +105,9 @@ handleDelete = (e) => {
       var prevState = Object.assign({},this.state)
       prevState.delete_last_deleted = fObject 
       this.setState(prevState, () => {
-          let del_Obj = {
-              id:fObject._id
-          }
+    
 
-      axios.post("/deleteStudent",del_Obj).then((res) => {
+      axios.post("/deleteStudent",{id:fObject._id}).then((res) => {
           // var prevState = Object.assign({},this.state)
           // prevState.facultyData = this.state.facultyData.filter((f) => f.studentid !== del_Obj.studentid && f.email !== del_Obj.email)
           // this.setState(prevState)
@@ -150,6 +148,7 @@ handleView = (e,id) => {
     })
 }
 
+
 handleDeleteTid = (e,id)  =>{
   var prevState = Object.assign({},this.state)
   prevState.delete_showmodal=true
@@ -172,66 +171,84 @@ handleAddModalShow = () =>{
 handleSubmitAddStudent = (e) => {
   e.preventDefault()
   let obj = this.state
-      let studentInfo = {
+    if(obj.gender === "" || obj.gender === "Gender..." )
+    {
+        alert("Please select a gender")
+    }else if(obj.theclass==="" || obj.theclass === "Class...")
+    {
+        alert("Please select a class")
+    }
+    else if(obj.section==="" || obj.section === "Section...")
+    {
+        alert("Please select a section")
+    }
+    else
+    {
+        this.setState({adding:true})
+        let studentInfo = {
 
-          "name": obj.name,
-          "pcontact": obj.pcontact,
-          "gender": obj.gender,
-          "pemail": obj.pemail,
-          "section": obj.section,
-          "theclass": obj.class,
-          "pname": obj.pname,
-      }
+            "name": obj.name,
+            "pcontact": obj.pcontact,
+            "gender": obj.gender,
+            "pemail": obj.pemail,
+            "section": obj.section,
+            "theclass": obj.theclass,
+            "pname": obj.pname,
+        }
 
-      console.log(studentInfo)
-      axios.post("/registerStudent",studentInfo).then((res)=>{
-          console.log(res.data.message)
-          this.setState({adding:false})
-          if(res.data.message === "Success")
-          {
-
-            let studentInfo = {
-                "_id": res.data.theid,
-                "name": obj.name,
-                "pcontact": obj.pcontact,
-                "gender": obj.gender,
-                "pemail": obj.pemail,
-                "section": obj.section,
-                "theclass": obj.class,
-                "pname": obj.pname,
+  
+        console.log(studentInfo)
+        axios.post("/registerStudent",studentInfo).then((res)=>{
+            console.log(res.data.message)
+            if(res.data.message === "Success")
+            {
+                
+              this.setState({adding:false})
+              let studentInfo = {
+                  "_id": res.data.theid,
+                  "name": obj.name,
+                  "pcontact": obj.pcontact,
+                  "gender": obj.gender,
+                  "pemail": obj.pemail,
+                  "section": obj.section,
+                  "theclass": obj.theclass,
+                  "pname": obj.pname,
+              }
+                var prevState = Object.assign({},this.state)
+                prevState.add_showmodal = false
+                prevState.theclass= ''
+                prevState.section= ''
+                prevState.gender= ''
+                prevState.name= ''
+                prevState.pcontact= ''
+                prevState.pemail= ''
+                prevState.pname= ''
+                let fd = prevState.studentData
+                fd.push(studentInfo)
+                prevState.studentData = fd
+                prevState.studentDataBackup = fd
+                this.setState(prevState)
             }
-              var prevState = Object.assign({},this.state)
-              prevState.add_showmodal = false
-              prevState.theclass= ''
-              prevState.section= ''
-              prevState.gender= ''
-              prevState.name= ''
-              prevState.pcontact= ''
-              prevState.pemail= ''
-              prevState.pname= ''
-              let fd = prevState.studentData
-              fd.push(studentInfo)
-              prevState.studentData = fd
-              this.setState(prevState)
-          }
-          else if(res.data.message==="Unsuccessful") {
-              alert("Duplicate Student Detected!")
-              var prevState = Object.assign({},this.state)
-              prevState.theclass= ''
-              prevState.section= ''
-              prevState.gender= ''
-              prevState.name= ''
-              prevState.pcontact= ''
-              prevState.pemail= ''
-              prevState.pname= ''
-              this.setState(prevState)
-          }
-          else{
-              alert("Something Went Wrong!")
-          }
+            else if(res.data.message==="Unsuccessful") {
+                alert("Duplicate Detected! Student Already present")
+                // var prevState = Object.assign({},this.state)
+                // prevState.theclass= ''
+                // prevState.section= ''
+                // prevState.gender= ''
+                // prevState.name= ''
+                // prevState.pcontact= ''
+                // prevState.pemail= ''
+                // prevState.pname= ''
+                // this.setState(prevState)
+            }
+            else{
+                alert("Something Went Wrong!")
+            }
+  
+  
+        }).catch((e) => alert(e))
+    }
 
-
-      }).catch((e) => alert(e))
 }
 
 handleEdit = () => {
@@ -241,6 +258,8 @@ handleEdit = () => {
 handleEditUpdate = () => {
     this.setState({updating: true})
     let obj = this.state.view_object
+
+
         
         let studentInfo = {
 
@@ -309,10 +328,20 @@ handleSearch = (e) => {
   e.preventDefault()
   this.setState({Search:e.target.value}, ()=>{
       console.log(this.state.Search)
-      let tempvalue = this.state.Search 
-      this.setState((prevState) => {
-              return {studentData: prevState.studentDataBackup.filter((f)=> f.name.toLowerCase().includes(tempvalue.toLowerCase()))}
-      })
+      let tempvalue = this.state.Search
+      if(tempvalue==="")
+      {
+            this.setState((prevState) => {
+                return {studentData: prevState.studentDataBackup}
+        })
+      }
+      else{
+
+          this.setState((prevState) => {
+                  return {studentData: prevState.studentDataBackup.filter((f)=> f.name.toLowerCase().includes(tempvalue.toLowerCase()))}
+          })
+      }
+
   })
   
   
@@ -326,7 +355,8 @@ handleSearch = (e) => {
         <div>
                 {/* BreadCrumbs */}
                 <Breadcrumb>
-                    <Breadcrumb.Item href="/admin/Dashboard">Admin</Breadcrumb.Item>
+                    {/* <Breadcrumb.Item href="/admin/Dashboard">Admin</Breadcrumb.Item> */}
+                    <Breadcrumb.Item >Admin</Breadcrumb.Item>
                     <Breadcrumb.Item active>View Students</Breadcrumb.Item>
                 </Breadcrumb>
 
@@ -367,16 +397,24 @@ handleSearch = (e) => {
                         <Form onSubmit={this.handleSubmitAddStudent}>
 
                         <div>
-                          <Form.Row>
+                                      <Form.Row>
+                                            <Form.Group as={Col}>
+                                            <Form.Label><b>Student Information</b></Form.Label>
+                                            </Form.Group>
+                                        </Form.Row>
+                                        <Form.Row>
                                         <Form.Group as={Col}>
-                                        <Form.Label>Name:</Form.Label>
+                                        {/* <Form.Label>Name:</Form.Label> */}
                                             <Form.Control
                                                 required
                                                 type="text"
-                                                // placeholder="Enter Student Name"
+                                                placeholder="Student Name"
                                                 name="name"
+                                                maxlength="50"
+                                                pattern="^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$"
                                                 value={this.state.view_object.name}
                                                 onChange={this.handleEditInputs}
+
                                                 />
                                             </Form.Group>
                                            
@@ -384,7 +422,7 @@ handleSearch = (e) => {
 
                                         <Form.Row>
                                         <Form.Group as={Col}>
-                                        <Form.Label>Gender:</Form.Label>
+                                        {/* <Form.Label>Gender:</Form.Label> */}
                                             <Form.Control
                                              required
                                              name="gender"
@@ -404,7 +442,7 @@ handleSearch = (e) => {
                                         <Form.Row>
 
                                             <Form.Group as={Col}>
-                                            <Form.Label>Class:</Form.Label>
+                                            {/* <Form.Label>Class:</Form.Label> */}
                                             <Form.Control
                                              name="theclass"
                                              value={this.state.view_object.theclass}
@@ -418,7 +456,7 @@ handleSearch = (e) => {
                                             </Form.Group>
 
                                             <Form.Group as={Col}>
-                                            <Form.Label>Section:</Form.Label>
+                                            {/* <Form.Label>Section:</Form.Label> */}
                                             <Form.Control 
                                              name="section"
                                              value={this.state.view_object.section}
@@ -432,13 +470,22 @@ handleSearch = (e) => {
                                             </Form.Group>
                                         </Form.Row>
 
+                                        {/* <br/> */}
+                                        <hr/>
+                                        <Form.Row>
+                                            <Form.Group as={Col}>
+                                            <Form.Label><b>Parent/Guardian Information</b></Form.Label>
+                                            </Form.Group>
+                                        </Form.Row>
                                         <Form.Row>
                                         <Form.Group as={Col}>
-                                        <Form.Label>Parent's Name:</Form.Label>
+                                        {/* <Form.Label>Name:</Form.Label> */}
                                             <Form.Control
                                                 required
                                                 type="text"
-                                                //placeholder="Enter Parent's Name"
+                                                maxlength="50"
+                                                pattern="^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$"
+                                                placeholder="Parent Name"
                                                 name="pname"
                                                 value={this.state.view_object.pname}
                                                 onChange={this.handleEditInputs}
@@ -449,27 +496,34 @@ handleSearch = (e) => {
 
                                         <Form.Row>
                                             <Form.Group as={Col}>
-                                            <Form.Label>Parent's Email:</Form.Label>
+                                            {/* <Form.Label>Email:</Form.Label> */}
                                                 <Form.Control
                                                 name="pemail"
                                                 value={this.state.view_object.pemail}
                                                 onChange={this.handleEditInputs}
                                                 required
                                                 type="email"
-                                                // placeholder="Parent's Email"
+                                                maxlength="50"
+                                                placeholder="Email"
+                                                pattern={`^[a-z0-9](\.?[a-z0-9_-]){0,}@[a-z0-9-]+\.([a-z]{1,6}\.)?[a-z]{2,6}$`}
                                                 />
                                             </Form.Group>
 
                                             <Form.Group as={Col}>
-                                            <Form.Label>Parent's Contact:</Form.Label>
+                                            {/* <Form.Label>Contact:</Form.Label> */}
                                                 <Form.Control
                                                  name="pcontact"
                                                  value={this.state.view_object.pcontact}
                                                  onChange={this.handleEditInputs}
                                                 required
-                                                type="text"
-                                                // placeholder="Enter Parent's Contact"
+                                                type="tel"
+                                                placeholder="Contact"
+                                                maxlength="13"
+                                                pattern="^((\+92)|(0092))-{0,1}\d{3}-{0,1}\d{7}$|^\d{11}$|^\d{4}-\d{7}$" 
                                                 />
+                                                <Form.Text className="text-muted">
+                                            Recommended Format: +92xxxxxxxxxx
+                                            </Form.Text>
                                             </Form.Group>
 
 
@@ -571,18 +625,25 @@ handleSearch = (e) => {
                     <Modal.Header> 
                         <Modal.Title>Add Student</Modal.Title>
                     </Modal.Header>
+                    <Form onSubmit={this.handleSubmitAddStudent}>
+                        <div>
                     <Modal.Body>
-                        <Card>
-                            <Card.Body>
-                                <Form onSubmit={this.handleSubmitAddStudent}>
-                                    <div>
+                        {/* <Card> */}
+                            {/* <Card.Body> */}
+                                    <Form.Row>
+                                            <Form.Group as={Col}>
+                                            <Form.Label><b>Student Information</b></Form.Label>
+                                            </Form.Group>
+                                    </Form.Row>
                                     <Form.Row>
                                         <Form.Group as={Col}>
-                                        <Form.Label>Name:</Form.Label>
+                                        {/* <Form.Label>Name:</Form.Label> */}
                                             <Form.Control
                                                 required
                                                 type="text"
-                                                // placeholder="Enter Student Name"
+                                                maxlength="50"
+                                                pattern="^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$"
+                                                placeholder="Student Name"
                                                 name="name"
                                                 value={this.state.name}
                                                 onChange={this.handleAddInputs}
@@ -593,7 +654,7 @@ handleSearch = (e) => {
 
                                         <Form.Row>
                                         <Form.Group as={Col}>
-                                        <Form.Label>Gender:</Form.Label>
+                                        {/* <Form.Label>Gender:</Form.Label> */}
                                             <Form.Control
                                              required
                                              name="gender"
@@ -613,7 +674,7 @@ handleSearch = (e) => {
                                         <Form.Row>
 
                                             <Form.Group as={Col}>
-                                            <Form.Label>Class:</Form.Label>
+                                            {/* <Form.Label>Class:</Form.Label> */}
                                             <Form.Control
                                              name="theclass"
                                              value={this.state.theclass}
@@ -627,7 +688,7 @@ handleSearch = (e) => {
                                             </Form.Group>
 
                                             <Form.Group as={Col}>
-                                            <Form.Label>Section:</Form.Label>
+                                            {/* <Form.Label>Section:</Form.Label> */}
                                             <Form.Control 
                                              name="section"
                                              value={this.state.section}
@@ -641,13 +702,21 @@ handleSearch = (e) => {
                                             </Form.Group>
                                         </Form.Row>
 
+                                        <hr/>
+                                        <Form.Row>
+                                            <Form.Group as={Col}>
+                                            <Form.Label><b>Parent/Guardian Information</b></Form.Label>
+                                            </Form.Group>
+                                        </Form.Row>
                                         <Form.Row>
                                         <Form.Group as={Col}>
-                                        <Form.Label>Parent's Name:</Form.Label>
+                                        {/* <Form.Label>Name:</Form.Label> */}
                                             <Form.Control
                                                 required
                                                 type="text"
-                                               // placeholder="Enter Parent's Name"
+                                                maxlength="50"
+                                                pattern="^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$"
+                                                placeholder="Parent Name"
                                                 name="pname"
                                                 value={this.state.pname}
                                                 onChange={this.handleAddInputs}
@@ -658,41 +727,56 @@ handleSearch = (e) => {
 
                                         <Form.Row>
                                             <Form.Group as={Col}>
-                                            <Form.Label>Parent's Email:</Form.Label>
+                                            {/* <Form.Label>Email:</Form.Label> */}
                                                 <Form.Control
                                                 name="pemail"
                                                 value={this.state.pemail}
                                                 onChange={this.handleAddInputs}
                                                 required
                                                 type="email"
-                                                // placeholder="Parent's Email"
+                                                pattern={`^[a-z0-9](\.?[a-z0-9_-]){0,}@[a-z0-9-]+\.([a-z]{1,6}\.)?[a-z]{2,6}$`}
+                                                maxlength="50"
+                                                placeholder="Email"
                                                 />
                                             </Form.Group>
 
                                             <Form.Group as={Col}>
-                                            <Form.Label>Parent's Contact:</Form.Label>
+                                            {/* <Form.Label>Contact:</Form.Label> */}
                                                 <Form.Control
                                                  name="pcontact"
                                                  value={this.state.pcontact}
                                                  onChange={this.handleAddInputs}
                                                 required
-                                                type="text"
-                                                // placeholder="Enter Parent's Contact"
+                                                maxlength="13"
+                                                type="tel"
+                                                pattern="^((\+92)|(0092))-{0,1}\d{3}-{0,1}\d{7}$|^\d{11}$|^\d{4}-\d{7}$" 
+                                                placeholder="Contact"
                                                 />
+                                                <Form.Text className="text-muted">
+                                            Recommended Format: +92xxxxxxxxxx
+                                            </Form.Text>
                                             </Form.Group>
 
 
                                         </Form.Row>
 
-                                        <Button type="submit" ><FaPlus/> Add </Button>
-                                        </div>
-                                </Form>
-                            </Card.Body>
-                        </Card> 
+                            {/* </Card.Body> */}
+                        {/* </Card>  */}
                     </Modal.Body>
                     <Modal.Footer>
+
+                        
                         <Button variant="secondary" onClick={this.handleAddModalClose}>Close</Button>
+                       {this.state.adding?
+                            <Button disabled ><FaPlus/> Adding... </Button>
+                            :
+                            <Button type="submit" ><FaPlus/> Add </Button>
+                       }
+                       
+                            
                     </Modal.Footer>
+                    </div>
+                    </Form>
                 </Modal>
 
 
@@ -729,7 +813,7 @@ handleSearch = (e) => {
                 <br/>
 
                 {/* Table */}
-                <Table responsive hover>
+                <Table responsive bordered striped hover>
                     <thead>
                         <th> id</th>
                         <th> Name</th>
@@ -743,22 +827,26 @@ handleSearch = (e) => {
                                 <tr key={id}>
                                     <td>{_id}</td>
                                     <td>{name}</td>
-                                    <td>{`${theclass}-${section}`}</td>
+                                    <td>
+                                     {`${theclass}-${section}`}                                
+                                    </td>
                                     <td>
                                         {/* <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">View/Edit</Tooltip>}>
                                             <span className="d-inline-block"> */}
-                                            <Container>
-                                                <Row>
-                                                <Col xs={4.5}>
-                                                
-                                                <Button variant="success" onClick={(e)=>this.handleView(e,_id)}> <FaEye/> View/Edit</Button>
-                                                </Col>
-                                                <Col>
-                                                <Button variant="danger" onClick={(e) => this.handleDeleteTid(e,_id)}> <FaTrashAlt/> Delete</Button>
-                                                </Col>
-                                                </Row>
-
-                                            </Container>
+                                        
+                                                    <Container>
+                                                    <Row>
+                                                        <Col xs={4.5}>
+                                                        
+                                                        <Button variant="success" onClick={(e)=>this.handleView(e,_id)}> <FaEye/> View/Edit</Button>
+                                                        </Col>
+                                                        <Col>
+                                                        <Button variant="danger" onClick={(e) => this.handleDeleteTid(e,_id)}> <FaTrashAlt/> Delete</Button>
+                                                        </Col>
+                                                    </Row>
+                                                    </Container>                                                   
+                                                    
+                        
                                             {/* </span>
                                             </OverlayTrigger> */}
                                     </td>

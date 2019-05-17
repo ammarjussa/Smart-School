@@ -111,7 +111,7 @@ class ClassesTab extends Component {
             // this.setState(prevState)
             console.log("Deleted", del_Obj.id)
             var prevState = Object.assign({},this.state)
-            let fd = prevState.classesData
+            let fd = prevState.classesDataBackup
             fd = fd.filter((f) => f._id !== fObject._id)
             prevState.classesData = fd
             prevState.classesDataBackup = fd
@@ -123,8 +123,6 @@ class ClassesTab extends Component {
 
 
     })
-
-    
   }
 
   get_student(id,cb) {
@@ -173,7 +171,17 @@ class ClassesTab extends Component {
   handleSubmitAddStudent = (e) => {
     e.preventDefault()
     let obj = this.state
-    
+    if(obj.theclass==="" || obj.theclass==="Grade...")
+    {
+        alert("Please select a class")
+    }
+    else if(obj.section==="" || obj.theclass==="Section...")
+    {
+        alert("Please select a section")
+    }
+    else
+    {
+        this.setState({adding:true})
         let classInfo = {
             
             section: obj.section,
@@ -186,6 +194,7 @@ class ClassesTab extends Component {
             this.setState({adding:false})
             if(res.data.message === "Success")
             {
+                this.setState({adding:false})
                 let classInfo = {
                     _id: res.data.theid,
                     section: obj.section,
@@ -197,10 +206,11 @@ class ClassesTab extends Component {
                 prevState.add_showmodal = false
                 prevState.theclass= ''
                 prevState.cap= ''
-                prevState.subject= ''
+                prevState.section= ''
                 let fd = prevState.classesData
                 fd.push(classInfo)
                 prevState.classesData = fd
+                prevState.classesDataBackup = fd
                 this.setState(prevState)
             }
             else{
@@ -210,6 +220,7 @@ class ClassesTab extends Component {
 
 
         }).catch((e) => console.log(e))
+    }
   }
 
   handleEdit = () => {
@@ -295,9 +306,9 @@ adding = (e) =>{
         }
         else
         {
-                        this.setState((prevState) => {
-                            return {classesData: prevState.classesDataBackup}
-                        })
+            this.setState((prevState) => {
+                return {classesData: prevState.classesDataBackup}
+            })
 
         }
     })
@@ -313,7 +324,8 @@ adding = (e) =>{
         <div>
                 {/* BreadCrumbs */}
                 <Breadcrumb>
-                    <Breadcrumb.Item href="/admin/Dashboard">Admin</Breadcrumb.Item>
+                    {/* <Breadcrumb.Item href="/admin/Dashboard">Admin</Breadcrumb.Item> */}
+                    <Breadcrumb.Item>Admin</Breadcrumb.Item>
                     <Breadcrumb.Item active>View Classes</Breadcrumb.Item>
                 </Breadcrumb>
 
@@ -367,10 +379,6 @@ adding = (e) =>{
                                           <option>7</option>
                                           <option>8</option>
                                           <option>9</option>
-                                          <option>10</option>
-                                          <option>11</option>
-                                          <option>12</option>
-                                          <option>13</option>
                                       </Form.Control>
                                       </Form.Group>
                                   </Form.Row>
@@ -501,10 +509,6 @@ adding = (e) =>{
                                                 <option>7</option>
                                                 <option>8</option>
                                                 <option>9</option>
-                                                <option>10</option>
-                                                <option>11</option>
-                                                <option>12</option>
-                                                <option>13</option>
                                             </Form.Control>
                                             </Form.Group>
                                         </Form.Row>
@@ -555,7 +559,11 @@ adding = (e) =>{
                         </Card>  */}
                     </Modal.Body>
                     <Modal.Footer>
-                    <Button variant="primary" type="submit" ><FaPlus/> Add </Button>
+                    {this.state.adding?
+                            <Button disabled ><FaPlus/> Adding... </Button>
+                            :
+                            <Button type="submit" ><FaPlus/> Add </Button>
+                       }
                     </Modal.Footer>
                         </div>
                 </Form>
@@ -595,7 +603,7 @@ adding = (e) =>{
                 <br/>
 
                 {/* Table */}
-                <Table responsive hover>
+                <Table responsive bordered striped hover>
                     <thead>
                         <th> id </th>
                         <th> class-Section</th>

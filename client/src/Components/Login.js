@@ -131,7 +131,7 @@ class Login extends Component {
             onSubmit={(e)=>this.sendToServer(this.state,e,(resp,profile) => this.handleSubmit(resp,profile))}
             >
 
-              <Form.Group as={Col}>
+              <Form.Group className="UserForm" as={Col}>
                 {/* <Form.Label>User</Form.Label> */}
                 <Form.Control 
                 name="user"
@@ -181,3 +181,4 @@ class Login extends Component {
 }
 
 export default Login;
+export {Login};

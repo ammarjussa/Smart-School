@@ -6,7 +6,7 @@ import AdminDashboard from './AdminDashboard'
 import NotFound from '../NotFound'
 import Faculty from './AdminFaculty'
 import {FormControl,Form,Navbar,Tab,Nav,Table, Alert, Modal, Container, Col, Row, Card, Button } from 'react-bootstrap';
-import { FaPowerOff} from "react-icons/fa";
+import { FaPowerOff,FaTachometerAlt,FaUserGraduate,FaUserFriends,FaMailBulk,FaLandmark} from "react-icons/fa";
 import ResultsTab from './AdminResults';
 import StudentsTab from './AdminStudents';
 import ClassesTab from './AdminClasses';
@@ -46,22 +46,22 @@ class AdminPanel extends Component {
 
         <Tab.Container id="left-tabs-example" defaultActiveKey="Dashboard">
           <Row>
-            <Col sm={3}>
+            <Col sm={2}>
               <Nav sticky="top" variant="pills" className="flex-column">
-                <Nav.Item>
-                  <Nav.Link onSelect={this.handleItemClick} eventKey="Dashboard">Dashboard</Nav.Link>
+                <Nav.Item >
+                  <Nav.Link style={{content:"50px",height:"50px"}} onSelect={this.handleItemClick} eventKey="Dashboard"><FaTachometerAlt /> Dashboard</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link onSelect={this.handleItemClick} eventKey="Students">Students</Nav.Link>
+                  <Nav.Link style={{content:"50px",height:"50px"}} onSelect={this.handleItemClick} eventKey="Students"><FaUserFriends/> Students</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link onSelect={this.handleItemClick} eventKey="Classes">Classes</Nav.Link>
+                  <Nav.Link style={{content:"50px",height:"50px"}} onSelect={this.handleItemClick} eventKey="Classes"><FaLandmark/> Classes</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link onSelect={this.handleItemClick} eventKey="Faculty">Faculty</Nav.Link>
+                  <Nav.Link style={{content:"50px",height:"50px"}} onSelect={this.handleItemClick} eventKey="Faculty"><FaUserGraduate/> Faculty</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link onSelect={this.handleItemClick} eventKey="Results">Send Results</Nav.Link>
+                  <Nav.Link style={{content:"50px",height:"50px"}} onSelect={this.handleItemClick} eventKey="Results"><FaMailBulk/> Send Results</Nav.Link>
                 </Nav.Item>
               </Nav>
             </Col>

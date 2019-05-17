@@ -1,0 +1,165 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Login Component Login renders properly 1`] = `
+<div>
+  <Bootstrap(Modal)
+    centered={true}
+    show={false}
+    size="sm"
+  >
+    <ModalBody
+      className="App"
+    >
+      <Bootstrap(Spinner)
+        animation="grow"
+        variant="primary"
+      />
+      <Bootstrap(Spinner)
+        animation="grow"
+        variant="warning"
+      />
+      <Bootstrap(Spinner)
+        animation="grow"
+        variant="danger"
+      />
+    </ModalBody>
+  </Bootstrap(Modal)>
+  <LoginNavBar />
+  <div
+    className="center"
+  >
+    <Card
+      as="div"
+      body={false}
+      style={
+        Object {
+          "width": "20rem",
+        }
+      }
+    >
+      <div
+        className="App"
+      >
+        <CardHeader>
+          User Login
+        </CardHeader>
+        <CardBody>
+          <Form
+            as="form"
+            inline={false}
+            onSubmit={[Function]}
+          >
+            <FormGroup
+              as={
+                Object {
+                  "$$typeof": Symbol(react.forward_ref),
+                  "defaultProps": Object {
+                    "as": "div",
+                  },
+                  "displayName": "Col",
+                  "render": [Function],
+                }
+              }
+              className="UserForm"
+            >
+              <FormControl
+                as="select"
+                name="user"
+                onChange={[Function]}
+              >
+                <option>
+                  Select User...
+                </option>
+                <option
+                  value="Admin"
+                >
+                  Admin
+                </option>
+                <option
+                  value="Faculty"
+                >
+                  Faculty
+                </option>
+              </FormControl>
+            </FormGroup>
+            <FormGroup
+              as={
+                Object {
+                  "$$typeof": Symbol(react.forward_ref),
+                  "defaultProps": Object {
+                    "as": "div",
+                  },
+                  "displayName": "Col",
+                  "render": [Function],
+                }
+              }
+            >
+              <FormControl
+                as="input"
+                name="email"
+                onChange={[Function]}
+                placeholder="Enter Email"
+                required={true}
+                type="email"
+                value=""
+              />
+            </FormGroup>
+            <FormGroup
+              as={
+                Object {
+                  "$$typeof": Symbol(react.forward_ref),
+                  "defaultProps": Object {
+                    "as": "div",
+                  },
+                  "displayName": "Col",
+                  "render": [Function],
+                }
+              }
+            >
+              <FormControl
+                as="input"
+                name="password"
+                onChange={[Function]}
+                placeholder="Enter Password"
+                required={true}
+                type="password"
+                value=""
+              />
+            </FormGroup>
+            <Button
+              active={false}
+              disabled={false}
+              type="submit"
+              variant="outline-primary"
+            >
+              Login
+            </Button>
+          </Form>
+        </CardBody>
+      </div>
+    </Card>
+  </div>
+</div>
+`;
+
+exports[`Login Component Selecting no user results in an error 1`] = `
+<FormControl
+  as="select"
+  name="user"
+  onChange={[Function]}
+>
+  <option>
+    Select User...
+  </option>
+  <option
+    value="Admin"
+  >
+    Admin
+  </option>
+  <option
+    value="Faculty"
+  >
+    Faculty
+  </option>
+</FormControl>
+`;

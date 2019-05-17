@@ -172,7 +172,8 @@ handleEditInputs = (ev) => {
         <div>
                 {/* BreadCrumbs */}
                 <Breadcrumb>
-                    <Breadcrumb.Item href="/faculty/Dashboard">Admin</Breadcrumb.Item>
+                    {/* <Breadcrumb.Item href="/faculty/Dashboard">Admin</Breadcrumb.Item> */}
+                    <Breadcrumb.Item>Faculty</Breadcrumb.Item>
                     <Breadcrumb.Item active>Send Results</Breadcrumb.Item>
                 </Breadcrumb>
   
@@ -399,7 +400,7 @@ handleEditInputs = (ev) => {
                   <br/>
   
                   {/* Table */}
-                  <Table responsive hover>
+                  <Table responsive striped bordered hover>
                       <thead>
                           <th> id</th>
                           <th> Name</th>

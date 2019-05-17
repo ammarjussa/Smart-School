@@ -16,3 +16,4 @@ class FacultyDashboard extends Component {
 }
 
 export default FacultyDashboard;
+export {FacultyDashboard}

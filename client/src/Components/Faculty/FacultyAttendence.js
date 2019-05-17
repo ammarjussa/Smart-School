@@ -80,7 +80,8 @@ markAbsent(id) {
         <div>
                 {/* BreadCrumbs */}
                 <Breadcrumb>
-                    <Breadcrumb.Item href="/faculty/Dashboard">Faculty</Breadcrumb.Item>
+                    {/* <Breadcrumb.Item href="/faculty/Dashboard">Faculty</Breadcrumb.Item> */}
+                    <Breadcrumb.Item>Faculty</Breadcrumb.Item>
                     <Breadcrumb.Item active>attendance</Breadcrumb.Item>
                 </Breadcrumb>
         </div>
@@ -89,7 +90,7 @@ markAbsent(id) {
           <br/>
   
           {/* Table */}
-          <Table responsive hover>
+          <Table responsive striped bordered hover>
               <thead>
                   <th> id</th>
                   <th> Name</th>

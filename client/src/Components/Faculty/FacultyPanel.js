@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {Route,Switch} from 'react-router'
 import auth from '../../auth';
 import {Navbar,Tab,Nav, Container, Col, Row, Button } from 'react-bootstrap';
-import {FaPowerOff} from "react-icons/fa";
+import {FaPowerOff, FaUserFriends,FaTachometerAlt,FaBook} from "react-icons/fa";
 import FacultyDashboard from './FacultyDashboard'
 import FStudentsTab from './FacultyStudents';
 import Attendence from './FacultyAttendence';
@@ -37,16 +37,16 @@ class FacultyPanel extends Component {
 
         <Tab.Container id="left-tabs-example" defaultActiveKey="Dashboard">
           <Row>
-            <Col sm={3}>
+            <Col sm={2}>
               <Nav sticky="top" variant="pills" className="flex-column">
                 <Nav.Item>
-                  <Nav.Link onSelect={this.handleItemClick} eventKey="Dashboard">Dasboard</Nav.Link>
+                  <Nav.Link style={{content:"50px",height:"50px"}} onSelect={this.handleItemClick} eventKey="Dashboard"><FaTachometerAlt/> Dashsboard</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link onSelect={this.handleItemClick} eventKey="Students">Students</Nav.Link>
+                  <Nav.Link style={{content:"50px",height:"50px"}} onSelect={this.handleItemClick} eventKey="Students"><FaUserFriends/> Students</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link onSelect={this.handleItemClick} eventKey="Attendence">Attendence</Nav.Link>
+                  <Nav.Link style={{content:"50px",height:"50px"}} onSelect={this.handleItemClick} eventKey="Attendence"><FaBook/> Attendence</Nav.Link>
                 </Nav.Item>
               </Nav>
             </Col>

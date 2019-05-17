@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Admin Dashboard Component Admin Dashboard renders successfully 1`] = `
+<div>
+  <h1>
+    Admin Dashboard
+  </h1>
+  <p>
+     Welcome 
+     
+  </p>
+</div>
+`;

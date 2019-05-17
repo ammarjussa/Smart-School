@@ -162,9 +162,6 @@ module.exports.updateClasses = function (account,callback){
         });
     }
 }
-
-
-
 ////////////////////////////////////STUDENTS/////////////////////////////////////////////////////
 
 
@@ -337,7 +334,7 @@ module.exports.deleteStudent = (id, callback) => {
             if (err) throw err;
             console.log('Student deleted Successfully');
             callback(obj);
-        })
+        }) 
     }
 }
 
@@ -416,7 +413,6 @@ module.exports.addAttendence = (theid, pora, callback) => {
 }
 
 ///////////////////////////////FACULTY//////////////////////////////////////////////
-
 
 //Add Faculty Query
 module.exports.addFaculty = function (account,callback){
