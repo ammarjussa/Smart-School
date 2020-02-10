@@ -1,5 +1,5 @@
 # Smart School Management System
-Smart School Management system is a web application which provide features such as storing and managing records of both students and faculties. It includes adding and updating personal information, classes, grades, attendence etc. 
+Smart School Management system is a web application which provide features such as storing and managing records of both students and faculties. It includes adding and updating personal information, classes, grades, attendance etc. 
 
 ## How to  use
 * First run **npm install** in the main folder
