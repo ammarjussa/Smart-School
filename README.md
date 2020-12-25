@@ -1,3 +1,5 @@
+[![HitCount](http://hits.dwyl.com/ammarjussa/Smart-School.svg)](http://hits.dwyl.com/ammarjussa/Smart-School) ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/ammarjussa/Smart-School) ![GitHub last commit](https://img.shields.io/github/last-commit/ammarjussa/Smart-School) ![GitHub language count](https://img.shields.io/github/languages/count/ammarjussa/Smart-School)
+
 # Smart School Management System
 
 ## Link: http://smartyschool.herokuapp.com/
