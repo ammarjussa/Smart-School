@@ -1,4 +1,6 @@
-[![HitCount](http://hits.dwyl.com/ammarjussa/Smart-School.svg)](http://hits.dwyl.com/ammarjussa/Smart-School) ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/ammarjussa/Smart-School) ![GitHub last commit](https://img.shields.io/github/last-commit/ammarjussa/Smart-School) ![GitHub language count](https://img.shields.io/github/languages/count/ammarjussa/Smart-School) https://badges.pufler.dev/created/ammarjussa/Smart-School
+[![HitCount](http://hits.dwyl.com/ammarjussa/Smart-School.svg)](http://hits.dwyl.com/ammarjussa/Smart-School) ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/ammarjussa/Smart-School) ![GitHub last commit](https://img.shields.io/github/last-commit/ammarjussa/Smart-School) ![GitHub language count](https://img.shields.io/github/languages/count/ammarjussa/Smart-School) [![Created Badge](https://badges.pufler.dev/created/ammarjussa/Smart-School)](https://badges.pufler.dev)
+
+
 
 
 
