@@ -6,7 +6,8 @@
 
 ## Link: http://smartyschool.herokuapp.com/  
 
-### Email: ammar@gmail.com Password: 12345
+### Email: ammar@gmail.com 
+### Password: 12345
 
 Smart School Management system is a web application which provide features such as storing and managing records of both students and faculties. It includes adding and updating personal information, classes, grades, attendance etc. 
 
