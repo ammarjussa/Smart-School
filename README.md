@@ -2,21 +2,21 @@
 
 
 
-
-
 # Smart School Management System
 
-## Link: http://smartyschool.herokuapp.com/
+## Link: http://smartyschool.herokuapp.com/  Email: ammar@gmail.com Password: 12345
 
 Smart School Management system is a web application which provide features such as storing and managing records of both students and faculties. It includes adding and updating personal information, classes, grades, attendance etc. 
 
 ## How to  use
-* First run **npm install** in the main folder
-* Run **npm install** in the client folder
-* In the main folder, run **npm run dev**
+- First run **npm install** in the main folder
+- Run **npm install** in the client folder
+- In the main folder, run **npm run dev**
 
-## How project is built
-This project is built by using ReactJS on front-end and ExpressJS on the back-end (MERN Stack)
+## Description
+- A system which includes details about faculties and students in the school.
+- Faculty can add/edit students' marks and give them grade.
+- The report card can be automatically generated and emailed to the students' emails.
 
 ## Tools Used
 
